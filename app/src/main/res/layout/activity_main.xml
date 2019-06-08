@@ -32,31 +32,31 @@
                 android:id="@+id/tabItem1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/home" />
+                android:icon="@drawable/icon_home" />
 
             <android.support.design.widget.TabItem
                 android:id="@+id/tabItem2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/todo" />
+                android:icon="@drawable/icon_todo" />
 
             <android.support.design.widget.TabItem
                 android:id="@+id/tabItem3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/timer" />
+                android:icon="@drawable/icon_timer" />
 
             <android.support.design.widget.TabItem
                 android:id="@+id/tabItem4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/games" />
+                android:icon="@drawable/icon_games" />
 
             <android.support.design.widget.TabItem
                 android:id="@+id/tabItem5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/settings" />
+                android:icon="@drawable/icon_settings" />
 
         </android.support.design.widget.TabLayout>
     </android.support.design.widget.AppBarLayout>

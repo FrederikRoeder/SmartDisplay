@@ -1,11 +1,15 @@
 package de.fhws.smartdisplay.view.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ImageSpan;
 
 import de.fhws.smartdisplay.R;
 import de.fhws.smartdisplay.view.fragments.GamesFragment;
@@ -18,7 +22,7 @@ import de.fhws.smartdisplay.view.fragments.TodoFragment;
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @StringRes
-    private static final int[] TAB_TITLES = new int[]{R.string.home, R.string.todo, R.string.timer, R.string.games, R.string.settings};
+    private static final int[] TAB_TITLES = new int[]{R.drawable.icon_home, R.drawable.icon_todo, R.drawable.icon_timer, R.drawable.icon_games, R.drawable.icon_settings};
     private final Context mContext;
 
     public SectionsPagerAdapter(Context context, FragmentManager fm) {
@@ -46,7 +50,12 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
-        return mContext.getResources().getString(TAB_TITLES[position]);
+        Drawable image = mContext.getResources().getDrawable(TAB_TITLES[position]);
+        image.setBounds(0, 0, image.getIntrinsicWidth(), image.getIntrinsicHeight());
+        SpannableString sb = new SpannableString(" ");
+        ImageSpan imageSpan = new ImageSpan(image, ImageSpan.ALIGN_BOTTOM);
+        sb.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return sb;
     }
 
     @Override
