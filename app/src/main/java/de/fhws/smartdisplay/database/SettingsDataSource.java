@@ -33,7 +33,7 @@ public class SettingsDataSource {
             SettingsTable.COLUMN_NAME_DREI
     };
 
-    private Settings cursorToSettings(Cursor cursor) {
+    private SettingsData cursorToSettingsData(Cursor cursor) {
         int idIndex = cursor.getColumnIndex(SettingsTable.COLUMN_NAME_ID);
         int einsIndex = cursor.getColumnIndex(SettingsTable.COLUMN_NAME_EINS);
         int zweiIndex = cursor.getColumnIndex(SettingsTable.COLUMN_NAME_ZWEI);
@@ -49,23 +49,23 @@ public class SettingsDataSource {
             eins = true;
         }
 
-        Settings settings = new Settings(id, eins, zwei, drei);
+        SettingsData settings = new SettingsData(id, eins, zwei, drei);
 
         return settings;
     }
 
 
-    public List<Settings> getAllSettings() {
-        List<Settings> settingsList = new ArrayList<>();
+    public List<SettingsData> getAllSettings() {
+        List<SettingsData> settingsList = new ArrayList<>();
         open();
         Cursor cursor = database.query(SettingsTable.TABLE_NAME,
                 columns, null, null, null, null, SettingsTable.COLUMN_NAME_ID);
 
         if (cursor != null) {
             if (cursor.moveToFirst()) {
-                Settings settings;
+                SettingsData settings;
                 while (!cursor.isAfterLast()) {
-                    settings = cursorToSettings(cursor);
+                    settings = cursorToSettingsData(cursor);
                     settingsList.add(settings);
                     cursor.moveToNext();
                 }
@@ -76,16 +76,16 @@ public class SettingsDataSource {
         return settingsList;
     }
 
-    public Settings findById(Long id) {
+    public SettingsData findById(Long id) {
         open();
         Cursor cursor = database.query(SettingsTable.TABLE_NAME,
                 columns, SettingsTable.COLUMN_NAME_ID + "=?",
                 new String[] {""+id}, null, null, null);
 
-        Settings settings = null;
+        SettingsData settings = null;
         if (cursor != null) {
             if(cursor.moveToFirst()) {
-                settings = cursorToSettings(cursor);
+                settings = cursorToSettingsData(cursor);
             }
         }
         cursor.close();
@@ -93,7 +93,7 @@ public class SettingsDataSource {
         return settings;
     }
 
-    public Settings create(Settings settingsWithoutId) {
+    public SettingsData create(SettingsData settingsWithoutId) {
         open();
         int einsInt = 0;
         if(settingsWithoutId.isEins()) {
@@ -111,10 +111,10 @@ public class SettingsDataSource {
                 columns, SettingsTable.COLUMN_NAME_ID + "=?",
                 new String[] {""+insertId}, null, null, null);
 
-        Settings settings = null;
+        SettingsData settings = null;
         if (cursor != null) {
             if(cursor.moveToFirst()) {
-                settings = cursorToSettings(cursor);
+                settings = cursorToSettingsData(cursor);
             }
         }
         cursor.close();
@@ -122,7 +122,7 @@ public class SettingsDataSource {
         return settings;
     }
 
-    public void update(Settings settingsWithId) {
+    public void update(SettingsData settingsWithId) {
         open();
         int einsInt = 0;
         if(settingsWithId.isEins()) {

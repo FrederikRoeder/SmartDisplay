@@ -1,6 +1,7 @@
 package de.fhws.smartdisplay.database;
 
 public class SettingsTable {
+
     private static final String CONSTRAINT_PRIMARY_KEY = "PRIMARY KEY";
     private static final String FOREIGN_KEY = "FOREIGN KEY";
     private static final String REFERENCES = "REFERENCES";

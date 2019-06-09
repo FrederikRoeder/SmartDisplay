@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import de.fhws.smartdisplay.R;
 
 public class TimerFragment extends Fragment {
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

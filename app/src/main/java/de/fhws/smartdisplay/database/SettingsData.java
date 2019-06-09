@@ -1,19 +1,20 @@
 package de.fhws.smartdisplay.database;
 
-public class Settings {
+public class SettingsData {
+
     private Long id;
     private boolean eins;
     private int zwei;
     private String drei;
 
-    public Settings(Long id, boolean eins, int zwei, String drei) {
+    public SettingsData(Long id, boolean eins, int zwei, String drei) {
         this.id = id;
         this.eins = eins;
         this.zwei = zwei;
         this.drei = drei;
     }
 
-    public Settings(boolean eins, int zwei, String drei) {
+    public SettingsData(boolean eins, int zwei, String drei) {
         this.eins = eins;
         this.zwei = zwei;
         this.drei = drei;
