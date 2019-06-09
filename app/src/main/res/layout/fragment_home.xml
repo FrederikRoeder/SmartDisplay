@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content">
 
                 <Switch
-                    android:id="@+id/switch1"
+                    android:id="@+id/homeSwitch1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
@@ -48,7 +48,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <Switch
-                    android:id="@+id/switch2"
+                    android:id="@+id/homeSwitch2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
@@ -60,10 +60,10 @@
                     android:text="ToDo-Liste anzeigen"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/switch1" />
+                    app:layout_constraintTop_toBottomOf="@+id/homeSwitch1" />
 
                 <Switch
-                    android:id="@+id/switch3"
+                    android:id="@+id/homeSwitch3"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
@@ -75,10 +75,10 @@
                     android:text="Timer anzeigen"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/switch2" />
+                    app:layout_constraintTop_toBottomOf="@+id/homeSwitch2" />
 
                 <Switch
-                    android:id="@+id/switch4"
+                    android:id="@+id/homeSwitch4"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
@@ -90,10 +90,10 @@
                     android:text="Temperatur anzeigen"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/switch3" />
+                    app:layout_constraintTop_toBottomOf="@+id/homeSwitch3" />
 
                 <Switch
-                    android:id="@+id/switch5"
+                    android:id="@+id/homeSwitch5"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
@@ -106,7 +106,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/switch4" />
+                    app:layout_constraintTop_toBottomOf="@+id/homeSwitch4" />
 
             </android.support.constraint.ConstraintLayout>
         </ScrollView>
