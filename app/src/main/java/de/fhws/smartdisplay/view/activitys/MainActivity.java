@@ -1,5 +1,6 @@
 package de.fhws.smartdisplay.view.activitys;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -11,7 +12,7 @@ import de.fhws.smartdisplay.view.adapter.SectionsPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
-    private SettingsDataSource dataSource;
+    SettingsDataSource dataSource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
