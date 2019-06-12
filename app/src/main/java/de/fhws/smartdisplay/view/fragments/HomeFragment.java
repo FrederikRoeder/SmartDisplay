@@ -72,6 +72,7 @@ public class HomeFragment extends Fragment {
         if(settingsList.isEmpty()) {
             SettingsData settingsData = new SettingsData();
             dataSource.create(settingsData);
+            Toast.makeText(this.getContext(), "erstellt", Toast.LENGTH_LONG).show();
             return false;
         } else if(settingsList.size() > 1) {
             for(int i = 0; i < settingsList.size()-1; i++){
@@ -79,6 +80,12 @@ public class HomeFragment extends Fragment {
             }
             return settingsList.get(0).isNotificationSet();
         } else {
+            if(settingsList.get(0).isNotificationSet()){
+                Toast.makeText(this.getContext(), "N Set", Toast.LENGTH_LONG).show();
+            }else{
+                Toast.makeText(this.getContext(), "N Not Set", Toast.LENGTH_LONG).show();
+            }
+
             return settingsList.get(0).isNotificationSet();
         }
     }

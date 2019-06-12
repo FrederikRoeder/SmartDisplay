@@ -5,11 +5,18 @@ import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.widget.Toast;
 
+import de.fhws.smartdisplay.database.SettingsData;
+import de.fhws.smartdisplay.database.SettingsDataSource;
+
 public class NotificationListener extends NotificationListenerService {
+
+    private SettingsDataSource dataSource;
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        dataSource = new SettingsDataSource(this);
     }
 
     @Override
