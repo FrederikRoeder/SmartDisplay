@@ -33,80 +33,70 @@
                 android:layout_height="wrap_content">
 
                 <Switch
-                    android:id="@+id/homeSwitch1"
+                    android:id="@+id/homeSwitchNotification"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="8dp"
-                    android:layout_marginRight="8dp"
                     android:button="@drawable/icon_notification_dark"
-                    android:text="Benachrichtigungen anzeigen"
+                    android:text="@string/notification_switch"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <Switch
-                    android:id="@+id/homeSwitch2"
+                    android:id="@+id/homeSwitchToDo"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="8dp"
-                    android:layout_marginRight="8dp"
                     android:button="@drawable/icon_todo_dark"
-                    android:text="ToDo-Liste anzeigen"
+                    android:text="@string/todo_switch"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/homeSwitch1" />
+                    app:layout_constraintTop_toBottomOf="@+id/homeSwitchNotification" />
 
                 <Switch
-                    android:id="@+id/homeSwitch3"
+                    android:id="@+id/homeSwitchTimer"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="8dp"
-                    android:layout_marginRight="8dp"
                     android:button="@drawable/icon_timer_dark"
-                    android:text="Timer anzeigen"
+                    android:text="@string/timer_switch"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/homeSwitch2" />
+                    app:layout_constraintTop_toBottomOf="@+id/homeSwitchToDo" />
 
                 <Switch
-                    android:id="@+id/homeSwitch4"
+                    android:id="@+id/homeSwitchTemp"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="8dp"
-                    android:layout_marginRight="8dp"
                     android:button="@drawable/icon_sun_dark"
-                    android:text="Temperatur anzeigen"
+                    android:text="@string/temp_switch"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/homeSwitch3" />
+                    app:layout_constraintTop_toBottomOf="@+id/homeSwitchTimer" />
 
                 <Switch
-                    android:id="@+id/homeSwitch5"
+                    android:id="@+id/homeSwitchEffect"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="8dp"
-                    android:layout_marginRight="8dp"
                     android:button="@drawable/icon_effect_dark"
-                    android:text="Visuelle Effekte anzeigen"
+                    android:text="@string/effect_switch"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/homeSwitch4" />
+                    app:layout_constraintTop_toBottomOf="@+id/homeSwitchTemp" />
 
             </android.support.constraint.ConstraintLayout>
         </ScrollView>

@@ -3,21 +3,27 @@ package de.fhws.smartdisplay.database;
 public class SettingsData {
 
     private Long id;
-    private boolean eins;
-    private int zwei;
-    private String drei;
+    private boolean notificationSet = false;
+    private String name = "";
 
-    public SettingsData(Long id, boolean eins, int zwei, String drei) {
+    public SettingsData() {};
+
+    public SettingsData(Long id, boolean notificationSet, String name) {
         this.id = id;
-        this.eins = eins;
-        this.zwei = zwei;
-        this.drei = drei;
+        this.notificationSet = notificationSet;
+        this.name = name;
     }
 
-    public SettingsData(boolean eins, int zwei, String drei) {
-        this.eins = eins;
-        this.zwei = zwei;
-        this.drei = drei;
+    public SettingsData(boolean notificationSet, String name) {
+        this.name = name;
+    }
+
+    public SettingsData(boolean notificationSet) {
+        this.notificationSet = notificationSet;
+    }
+
+    public SettingsData(String name) {
+        this.name = name;
     }
 
     public Long getId() {
@@ -28,17 +34,13 @@ public class SettingsData {
         this.id = id;
     }
 
-    public boolean isEins() {return eins;}
+    public boolean isNotificationSet() {return notificationSet;}
 
-    public void setEins(boolean eins) {this.eins = eins;}
+    public void setNotificationSet(boolean notificationSet) {this.notificationSet = notificationSet;}
 
-    public int getZwei() {return zwei;}
+    public String getName() {return name;}
 
-    public void setZwei(int zwei) {this.zwei = zwei;}
-
-    public String getDrei() {return drei;}
-
-    public void setDrei(String drei) {this.drei = drei;}
+    public void setName(String name) {this.name = name;}
 
     @Override
     public String toString() {

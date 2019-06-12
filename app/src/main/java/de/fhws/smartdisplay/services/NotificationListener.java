@@ -5,7 +5,7 @@ import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.widget.Toast;
 
-public class NotificationService extends NotificationListenerService {
+public class NotificationListener extends NotificationListenerService {
 
     @Override
     public void onCreate() {

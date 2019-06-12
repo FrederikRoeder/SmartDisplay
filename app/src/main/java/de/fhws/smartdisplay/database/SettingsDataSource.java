@@ -27,28 +27,25 @@ public class SettingsDataSource {
 
     private String[] columns = {
             SettingsTable.COLUMN_NAME_ID,
-            SettingsTable.COLUMN_NAME_EINS,
-            SettingsTable.COLUMN_NAME_ZWEI,
-            SettingsTable.COLUMN_NAME_DREI
+            SettingsTable.COLUMN_NAME_NOTIFICATION_SET,
+            SettingsTable.COLUMN_NAME_NAME
     };
 
     private SettingsData cursorToSettingsData(Cursor cursor) {
         int idIndex = cursor.getColumnIndex(SettingsTable.COLUMN_NAME_ID);
-        int einsIndex = cursor.getColumnIndex(SettingsTable.COLUMN_NAME_EINS);
-        int zweiIndex = cursor.getColumnIndex(SettingsTable.COLUMN_NAME_ZWEI);
-        int dreiIndex = cursor.getColumnIndex(SettingsTable.COLUMN_NAME_DREI);
+        int notificationSetIndex = cursor.getColumnIndex(SettingsTable.COLUMN_NAME_NOTIFICATION_SET);
+        int nameIndex = cursor.getColumnIndex(SettingsTable.COLUMN_NAME_NAME);
 
         long id = cursor.getLong(idIndex);
-        int einsInt = cursor.getInt(einsIndex);
-        int zwei = cursor.getInt(zweiIndex);
-        String drei = cursor.getString(dreiIndex);
+        int notificationSetInt = cursor.getInt(notificationSetIndex);
+        String name = cursor.getString(nameIndex);
 
-        boolean eins = false;
-        if(einsInt > 0) {
-            eins = true;
+        boolean notificationSet = false;
+        if(notificationSetInt > 0) {
+            notificationSet = true;
         }
 
-        SettingsData settings = new SettingsData(id, eins, zwei, drei);
+        SettingsData settings = new SettingsData(id, notificationSet, name);
 
         return settings;
     }
@@ -94,15 +91,14 @@ public class SettingsDataSource {
 
     public SettingsData create(SettingsData settingsWithoutId) {
         open();
-        int einsInt = 0;
-        if(settingsWithoutId.isEins()) {
-            einsInt = 1;
+        int notificationSetInt = 0;
+        if(settingsWithoutId.isNotificationSet()) {
+            notificationSetInt = 1;
         }
 
         ContentValues values = new ContentValues();
-        values.put(SettingsTable.COLUMN_NAME_EINS, einsInt);
-        values.put(SettingsTable.COLUMN_NAME_ZWEI, settingsWithoutId.getZwei());
-        values.put(SettingsTable.COLUMN_NAME_DREI, settingsWithoutId.getDrei());
+        values.put(SettingsTable.COLUMN_NAME_NOTIFICATION_SET, notificationSetInt);
+        values.put(SettingsTable.COLUMN_NAME_NAME, settingsWithoutId.getName());
 
         long insertId = database.insert(SettingsTable.TABLE_NAME, null, values);
 
@@ -123,15 +119,14 @@ public class SettingsDataSource {
 
     public void update(SettingsData settingsWithId) {
         open();
-        int einsInt = 0;
-        if(settingsWithId.isEins()) {
-            einsInt = 1;
+        int notificationSetInt = 0;
+        if(settingsWithId.isNotificationSet()) {
+            notificationSetInt = 1;
         }
 
         ContentValues values = new ContentValues();
-        values.put(SettingsTable.COLUMN_NAME_EINS, einsInt);
-        values.put(SettingsTable.COLUMN_NAME_ZWEI, settingsWithId.getZwei());
-        values.put(SettingsTable.COLUMN_NAME_DREI, settingsWithId.getDrei());
+        values.put(SettingsTable.COLUMN_NAME_NOTIFICATION_SET, notificationSetInt);
+        values.put(SettingsTable.COLUMN_NAME_NAME, settingsWithId.getName());
 
         database.update(SettingsTable.TABLE_NAME,
                 values,
@@ -145,6 +140,17 @@ public class SettingsDataSource {
         database.delete(SettingsTable.TABLE_NAME,
                 SettingsTable.COLUMN_NAME_ID + "=?",
                 new String[] {""+id});
+        close();
+    }
+
+    public void deleteAll() {
+        List<SettingsData> settingsList = getAllSettings();
+        open();
+        for(SettingsData s : settingsList) {
+            database.delete(SettingsTable.TABLE_NAME,
+                    SettingsTable.COLUMN_NAME_ID + "=?",
+                    new String[] {""+s.getId()});
+        }
         close();
     }
 }

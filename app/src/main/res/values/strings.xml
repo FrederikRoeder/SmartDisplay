@@ -6,5 +6,11 @@
     <string name="games">Games</string>
     <string name="settings">Einstellungen</string>
     <string name="name">Name</string>
+    <string name="notification_switch">Benachrichtigungen anzeigen</string>
+    <string name="todo_switch">ToDo-Liste anzeigen</string>
+    <string name="timer_switch">Timer anzeigen</string>
+    <string name="temp_switch">Temperatur anzeigen</string>
+    <string name="effect_switch">Visuelle Effekte anzeigen</string>
+
 
 </resources>
