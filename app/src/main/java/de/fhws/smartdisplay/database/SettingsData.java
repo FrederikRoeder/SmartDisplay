@@ -3,23 +3,24 @@ package de.fhws.smartdisplay.database;
 public class SettingsData {
 
     private Long id;
-    private boolean notificationSet = false;
+    private boolean notificationEnabled = false;
     private String name = "";
 
     public SettingsData() {};
 
-    public SettingsData(Long id, boolean notificationSet, String name) {
+    public SettingsData(Long id, boolean notificationEnabled, String name) {
         this.id = id;
-        this.notificationSet = notificationSet;
+        this.notificationEnabled = notificationEnabled;
         this.name = name;
     }
 
-    public SettingsData(boolean notificationSet, String name) {
+    public SettingsData(boolean notificationEnabled, String name) {
+        this.notificationEnabled = notificationEnabled;
         this.name = name;
     }
 
-    public SettingsData(boolean notificationSet) {
-        this.notificationSet = notificationSet;
+    public SettingsData(boolean notificationEnabled) {
+        this.notificationEnabled = notificationEnabled;
     }
 
     public SettingsData(String name) {
@@ -34,9 +35,9 @@ public class SettingsData {
         this.id = id;
     }
 
-    public boolean isNotificationSet() {return notificationSet;}
+    public boolean isNotificationEnabled() {return notificationEnabled;}
 
-    public void setNotificationSet(boolean notificationSet) {this.notificationSet = notificationSet;}
+    public void setNotificationEnabled(boolean notificationEnabled) {this.notificationEnabled = notificationEnabled;}
 
     public String getName() {return name;}
 

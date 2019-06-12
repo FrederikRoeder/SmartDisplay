@@ -5,6 +5,8 @@ import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.widget.Toast;
 
+import java.util.List;
+
 import de.fhws.smartdisplay.database.SettingsData;
 import de.fhws.smartdisplay.database.SettingsDataSource;
 
@@ -32,5 +34,28 @@ public class NotificationListener extends NotificationListenerService {
 
     @Override
     public void onNotificationRemoved(StatusBarNotification sbn) {
+    }
+
+    private void sendNotification() {
+        List<SettingsData> settingsList = dataSource.getAll();
+        if(getNotificationState()) {
+
+        }
+    }
+
+    private boolean getNotificationState() {
+        List<SettingsData> settingsList = dataSource.getAll();
+        if(settingsList.isEmpty()) {
+            SettingsData settingsData = new SettingsData();
+            dataSource.create(settingsData);
+            return false;
+        } else if(settingsList.size() > 1) {
+            dataSource.deleteAll();
+            SettingsData settingsData = new SettingsData();
+            dataSource.create(settingsData);
+            return false;
+        } else {
+            return settingsList.get(0).isNotificationEnabled();
+        }
     }
 }
