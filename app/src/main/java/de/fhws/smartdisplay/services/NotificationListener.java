@@ -36,13 +36,6 @@ public class NotificationListener extends NotificationListenerService {
     public void onNotificationRemoved(StatusBarNotification sbn) {
     }
 
-    private void sendNotification() {
-        List<SettingsData> settingsList = dataSource.getAll();
-        if(getNotificationState()) {
-
-        }
-    }
-
     private boolean getNotificationState() {
         List<SettingsData> settingsList = dataSource.getAll();
         if(settingsList.isEmpty()) {
