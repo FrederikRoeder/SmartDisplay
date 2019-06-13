@@ -1,16 +1,17 @@
 <resources>
     <string name="app_name">Retrospect</string>
     <string name="home">Home</string>
-    <string name="todo">ToDo-Liste</string>
+    <string name="todo_list">ToDo-Liste</string>
     <string name="timer">Timer</string>
     <string name="games">Games</string>
     <string name="settings">Einstellungen</string>
     <string name="name">Name</string>
+    <string name="todo">ToDo</string>
+    <string name="add_todo">ToDo hinzufügen</string>
     <string name="notification_switch">Benachrichtigungen anzeigen</string>
     <string name="todo_switch">ToDo-Liste anzeigen</string>
     <string name="timer_switch">Timer anzeigen</string>
     <string name="temp_switch">Temperatur anzeigen</string>
     <string name="effect_switch">Visuelle Effekte anzeigen</string>
-
 
 </resources>

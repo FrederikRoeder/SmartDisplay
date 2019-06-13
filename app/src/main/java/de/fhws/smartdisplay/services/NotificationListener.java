@@ -23,13 +23,15 @@ public class NotificationListener extends NotificationListenerService {
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
-        String pack = sbn.getPackageName();
-        String ticker = sbn.getNotification().tickerText.toString();
+//        String pack = sbn.getPackageName();
+//        String ticker = sbn.getNotification().tickerText.toString();
         Bundle extras = sbn.getNotification().extras;
         String title = extras.getString("android.title");
         String text = extras.getCharSequence("android.text").toString();
 
-        Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+        if(getNotificationState()) {
+            Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

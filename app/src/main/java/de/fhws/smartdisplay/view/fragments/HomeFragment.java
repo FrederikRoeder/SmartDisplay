@@ -19,12 +19,14 @@ import java.util.List;
 import de.fhws.smartdisplay.R;
 import de.fhws.smartdisplay.database.SettingsData;
 import de.fhws.smartdisplay.database.SettingsDataSource;
+import de.fhws.smartdisplay.server.ServerConnection;
 
 public class HomeFragment extends Fragment {
 
     private static final String ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
 
     private SettingsDataSource dataSource;
+    private ServerConnection serverConnection;
 
     @Nullable
     @Override
@@ -32,13 +34,13 @@ public class HomeFragment extends Fragment {
         View view = getLayoutInflater().inflate(R.layout.fragment_home, container, false);
 
         dataSource = new SettingsDataSource(this.getContext());
-
-        Switch todoSwitch = view.findViewById(R.id.homeSwitchToDo);
-        Switch timerSwitch = view.findViewById(R.id.homeSwitchTimer);
-        Switch tempSwitch = view.findViewById(R.id.homeSwitchTemp);
-        Switch effectSwitch = view.findViewById(R.id.homeSwitchEffect);
+        serverConnection = new ServerConnection();
 
         setupNotificationSwitch(view);
+        setupTodoSwitch(view);
+        setupTimerSwitch(view);
+        setupTempSwitch(view);
+        setupEffectSwitch(view);
 
         return view;
     }
@@ -61,6 +63,70 @@ public class HomeFragment extends Fragment {
                     SettingsData settingsData = dataSource.getAll().get(0);
                     settingsData.setNotificationEnabled(false);
                     dataSource.update(settingsData);
+                }
+            }
+        });
+    }
+
+    private void setupTodoSwitch(View view) {
+        final Switch todoSwitch = view.findViewById(R.id.homeSwitchToDo);
+        //todo: Switch-Informationen vom Server ziehen und in der nächsten Zeile "false" ersetzen
+        todoSwitch.setChecked(false);
+        todoSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    //todo: Switch-Informationen an Server senden
+                }
+                if(!isChecked) {
+                    //todo: Switch-Informationen an Server senden
+                }
+            }
+        });
+    }
+
+    private void setupTimerSwitch(View view) {
+        final Switch timerSwitch = view.findViewById(R.id.homeSwitchTimer);
+        //todo: Switch-Informationen vom Server ziehen und in der nächsten Zeile "false" ersetzen
+        timerSwitch.setChecked(false);
+        timerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    //todo: Switch-Informationen an Server senden
+                }
+                if(!isChecked) {
+                    //todo: Switch-Informationen an Server senden
+                }
+            }
+        });
+    }
+
+    private void setupTempSwitch(View view) {
+        final Switch tempSwitch = view.findViewById(R.id.homeSwitchTemp);
+        //todo: Switch-Informationen vom Server ziehen und in der nächsten Zeile "false" ersetzen
+        tempSwitch.setChecked(false);
+        tempSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    //todo: Switch-Informationen an Server senden
+                }
+                if(!isChecked) {
+                    //todo: Switch-Informationen an Server senden
+                }
+            }
+        });
+    }
+
+    private void setupEffectSwitch(View view) {
+        final Switch effectSwitch = view.findViewById(R.id.homeSwitchToDo);
+        //todo: Switch-Informationen vom Server ziehen und in der nächsten Zeile "false" ersetzen
+        effectSwitch.setChecked(false);
+        effectSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    //todo: Switch-Informationen an Server senden
+                }
+                if(!isChecked) {
+                    //todo: Switch-Informationen an Server senden
                 }
             }
         });
