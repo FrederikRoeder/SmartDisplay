@@ -23,13 +23,21 @@ public class NotificationListener extends NotificationListenerService {
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
-//        String pack = sbn.getPackageName();
-//        String ticker = sbn.getNotification().tickerText.toString();
-        Bundle extras = sbn.getNotification().extras;
-        String title = extras.getString("android.title");
-        String text = extras.getCharSequence("android.text").toString();
-
         if(getNotificationState()) {
+            String pack = "";
+            String ticker = "";
+            String title = "";
+            String text = "";
+
+//            pack = sbn.getPackageName();
+//            ticker = sbn.getNotification().tickerText.toString();
+            Bundle extras = sbn.getNotification().extras;
+            title = extras.getString("android.title");
+            text = extras.getCharSequence("android.text").toString();
+
+            //todo: prüfen ob Nachricht SMS  / WhatsApp / Insta / Snapchat / Facebook / ... -Nachricht ist
+            //todo: prüfen, ob es pack / ticker / title / text gibt
+            //todo: vorhandene Daten an Server schicken
             Toast.makeText(this, text, Toast.LENGTH_LONG).show();
         }
     }
