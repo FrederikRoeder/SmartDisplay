@@ -51,7 +51,7 @@ public class HomeFragment extends Fragment {
         notificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(!isNotificationServiceEnabled()) {
-                    Toast.makeText(getContext(), "Zugriff auf Notifications in Einstellungen zulassen!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "Zugriff auf Notifications in Einstellungen erlauben!", Toast.LENGTH_LONG).show();
                     notificationSwitch.setChecked(false);
                 }
                 if(isChecked) {

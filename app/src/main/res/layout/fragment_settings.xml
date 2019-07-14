@@ -71,7 +71,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/settingsSwitch1" />
 
                 <ImageButton
-                    android:id="@+id/imageButtonRefreshTodos"
+                    android:id="@+id/imageButtonAllowNotifications"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
