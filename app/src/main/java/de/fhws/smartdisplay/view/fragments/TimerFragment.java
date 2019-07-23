@@ -1,7 +1,5 @@
 package de.fhws.smartdisplay.view.fragments;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,10 +15,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.fhws.smartdisplay.R;
+import de.fhws.smartdisplay.server.ConnectionFactory;
 import de.fhws.smartdisplay.server.ServerConnection;
 import de.fhws.smartdisplay.view.popups.TimerPopup;
 
@@ -34,7 +34,7 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = getLayoutInflater().inflate(R.layout.fragment_timer, container, false);
 
-        serverConnection = new ServerConnection();
+        serverConnection = new ConnectionFactory().buildConnection();
 
         setupTimerList(view);
         setupTimeView(view);
@@ -59,6 +59,13 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
     private void setupTimerList(View view) {
         //todo: sortierte Timer vom Server ziehen und in "timer" (next line) speichern
         List<String> timer = new ArrayList<>();
+
+        try {
+            timer = serverConnection.getTimerList().execute().body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         ListView timerList = view.findViewById(R.id.timerList);
 
         adapter = new ArrayAdapter<>(getActivity(), R.layout.list_timer, timer);
@@ -74,6 +81,11 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 String timer = (String) parent.getItemAtPosition(position);
                 //todo: Server den zu löschenden "timer" schicken
+                try {
+                    serverConnection.deleteTimer(timer).execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 updateTimerList();
                 Toast.makeText(getContext(), "Timer gelöscht", Toast.LENGTH_LONG).show();
                 return true;
@@ -89,6 +101,13 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
     private void updateTimerList() {
         //todo: aktualisierte und sortierte Timer vom Server ziehen und in "timer" (next line) speichern
         List<String> timer = new ArrayList<>();
+
+        try {
+            timer = serverConnection.getTimerList().execute().body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         adapter.clear();
         adapter = new ArrayAdapter<>(getActivity(), R.layout.list_timer, timer);
     }

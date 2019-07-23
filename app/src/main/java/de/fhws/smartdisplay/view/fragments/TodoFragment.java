@@ -14,10 +14,12 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.fhws.smartdisplay.R;
+import de.fhws.smartdisplay.server.ConnectionFactory;
 import de.fhws.smartdisplay.server.ServerConnection;
 import de.fhws.smartdisplay.view.popups.TodoPopup;
 
@@ -31,7 +33,7 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = getLayoutInflater().inflate(R.layout.fragment_todo, container, false);
 
-        serverConnection = new ServerConnection();
+        serverConnection = new ConnectionFactory().buildConnection();
 
         setupTodoList(view);
 
@@ -55,6 +57,13 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
     private void setupTodoList(View view) {
         //todo: ToDos vom Server ziehen und in "todos" (next line) speichern
         List<String> todos = new ArrayList<>();
+
+        try {
+            todos = serverConnection.getTodoList().execute().body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         ListView todoList = view.findViewById(R.id.todoList);
 
         adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, todos);
@@ -70,6 +79,11 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 String todo = (String) parent.getItemAtPosition(position);
                 //todo: Server das zu löschende "todo" schicken
+                try {
+                    serverConnection.deleteTodo(todo).execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 updateTodoList();
                 Toast.makeText(getContext(), "ToDo gelöscht", Toast.LENGTH_LONG).show();
                 return true;
@@ -80,6 +94,13 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
     private void updateTodoList() {
         //todo: aktualisierte ToDos vom Server ziehen und in "todos" (next line) speichern
         List<String> todos = new ArrayList<>();
+
+        try {
+            todos = serverConnection.getTodoList().execute().body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         adapter.clear();
         adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, todos);
     }

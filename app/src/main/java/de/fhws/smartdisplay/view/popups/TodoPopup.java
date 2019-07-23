@@ -9,9 +9,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
+import java.io.IOException;
+
 import de.fhws.smartdisplay.R;
+import de.fhws.smartdisplay.server.ConnectionFactory;
+import de.fhws.smartdisplay.server.ServerConnection;
 
 public class TodoPopup extends DialogFragment {
+
+    private ServerConnection serverConnection;
 
     public static TodoPopup newInstance() {
         TodoPopup frag = new TodoPopup();
@@ -24,6 +30,8 @@ public class TodoPopup extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.popup_todo, null);
 
+        serverConnection = new ConnectionFactory().buildConnection();
+
         final EditText textInput = view.findViewById(R.id.editTextTodo);
 
         builder.setView(view)
@@ -33,7 +41,13 @@ public class TodoPopup extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         final String inputText = getInputText(textInput);
                         //todo: Todo an Server schicken
-
+                        if(!inputText.isEmpty()) {
+                            try {
+                                serverConnection.addTodo(inputText).execute();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
                         DialogListener listener = (DialogListener) getTargetFragment();
                         listener.updateResult();
                     }

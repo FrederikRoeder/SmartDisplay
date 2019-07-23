@@ -5,23 +5,26 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import java.util.List;
 
 import de.fhws.smartdisplay.R;
 import de.fhws.smartdisplay.database.SettingsData;
 import de.fhws.smartdisplay.database.SettingsDataSource;
+import de.fhws.smartdisplay.server.ConnectionFactory;
 import de.fhws.smartdisplay.server.ServerConnection;
 
 public class SettingsFragment extends Fragment {
 
     SettingsDataSource dataSource;
-    ServerConnection serverConnection;
 
     @Nullable
     @Override
@@ -29,14 +32,20 @@ public class SettingsFragment extends Fragment {
         View view = getLayoutInflater().inflate(R.layout.fragment_settings, container, false);
 
         dataSource = new SettingsDataSource(this.getContext());
-        serverConnection = new ServerConnection();
 
-        EditText editTextName = view.findViewById(R.id.editTextName);
+        final EditText editTextName = view.findViewById(R.id.editTextName);
         editTextName.setText(getName());
-        //todo: bei Änderung des Namens (Bestätigung auf der Tastatur) neuen Namen an Server schicken +
-        //SettingsData settingsData = dataSource.getAll().get(0);
-        //settingsData.setName(editTextName.getText().toString());
-        //dataSource.update(settingsData);
+
+        editTextName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    SettingsData settingsData = dataSource.getAll().get(0);
+                    settingsData.setName(editTextName.getText().toString());
+                    dataSource.update(settingsData);
+                }
+                return false;
+            }
+        });
 
         ImageButton buttonAllowNotifications = view.findViewById(R.id.imageButtonAllowNotifications);
         buttonAllowNotifications.setOnClickListener(new View.OnClickListener() {

@@ -1,7 +1,5 @@
 package de.fhws.smartdisplay.view.fragments;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,18 +10,19 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import de.fhws.smartdisplay.R;
+import de.fhws.smartdisplay.server.ConnectionFactory;
 import de.fhws.smartdisplay.server.ServerConnection;
 
 public class GamesFragment extends Fragment {
 
-    ServerConnection serverConnection;
+    private ServerConnection serverConnection;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = getLayoutInflater().inflate(R.layout.fragment_games, container, false);
 
-        serverConnection = new ServerConnection();
+        serverConnection = new ConnectionFactory().buildConnection();
 
         ImageButton buttonGameOne = view.findViewById(R.id.imageButtonGame1);
         buttonGameOne.setOnClickListener(new View.OnClickListener() {

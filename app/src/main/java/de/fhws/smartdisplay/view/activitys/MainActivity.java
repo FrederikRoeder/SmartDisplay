@@ -12,8 +12,6 @@ import de.fhws.smartdisplay.view.adapter.SectionsPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
-    SettingsDataSource dataSource;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,6 +22,5 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
 
-        dataSource = new SettingsDataSource(this);
     }
 }

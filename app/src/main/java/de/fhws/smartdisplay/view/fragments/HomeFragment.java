@@ -14,11 +14,13 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.List;
 
 import de.fhws.smartdisplay.R;
 import de.fhws.smartdisplay.database.SettingsData;
 import de.fhws.smartdisplay.database.SettingsDataSource;
+import de.fhws.smartdisplay.server.ConnectionFactory;
 import de.fhws.smartdisplay.server.ServerConnection;
 
 public class HomeFragment extends Fragment {
@@ -34,9 +36,11 @@ public class HomeFragment extends Fragment {
         View view = getLayoutInflater().inflate(R.layout.fragment_home, container, false);
 
         dataSource = new SettingsDataSource(this.getContext());
-        serverConnection = new ServerConnection();
+        serverConnection = new ConnectionFactory().buildConnection();
+
 
         setupNotificationSwitch(view);
+        setupClockSwitch(view);
         setupTodoSwitch(view);
         setupTimerSwitch(view);
         setupTempSwitch(view);
@@ -68,17 +72,35 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    private void setupClockSwitch(View view) {
+        final Switch clockSwitch = view.findViewById(R.id.homeSwitchClock);
+
+        //todo: Switch-Informationen vom Server ziehen und in der nächsten Zeile "false" ersetzen
+        clockSwitch.setChecked(getClockState());
+        clockSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                //todo: Switch-Informationen an Server senden
+                try {
+                    serverConnection.switchClock().execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
     private void setupTodoSwitch(View view) {
         final Switch todoSwitch = view.findViewById(R.id.homeSwitchToDo);
+
         //todo: Switch-Informationen vom Server ziehen und in der nächsten Zeile "false" ersetzen
-        todoSwitch.setChecked(false);
+        todoSwitch.setChecked(getTodoState());
         todoSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
-                    //todo: Switch-Informationen an Server senden
-                }
-                if(!isChecked) {
-                    //todo: Switch-Informationen an Server senden
+                //todo: Switch-Informationen an Server senden
+                try {
+                    serverConnection.switchTodo().execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -87,15 +109,11 @@ public class HomeFragment extends Fragment {
     private void setupTimerSwitch(View view) {
         final Switch timerSwitch = view.findViewById(R.id.homeSwitchTimer);
         //todo: Switch-Informationen vom Server ziehen und in der nächsten Zeile "false" ersetzen
-        timerSwitch.setChecked(false);
+        timerSwitch.setChecked(getTimerState());
         timerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
-                    //todo: Switch-Informationen an Server senden
-                }
-                if(!isChecked) {
-                    //todo: Switch-Informationen an Server senden
-                }
+                //todo: Switch-Informationen an Server senden
+                serverConnection.switchTimer();
             }
         });
     }
@@ -103,14 +121,14 @@ public class HomeFragment extends Fragment {
     private void setupTempSwitch(View view) {
         final Switch tempSwitch = view.findViewById(R.id.homeSwitchTemp);
         //todo: Switch-Informationen vom Server ziehen und in der nächsten Zeile "false" ersetzen
-        tempSwitch.setChecked(false);
+        tempSwitch.setChecked(getTemperatureState());
         tempSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
-                    //todo: Switch-Informationen an Server senden
-                }
-                if(!isChecked) {
-                    //todo: Switch-Informationen an Server senden
+                //todo: Switch-Informationen an Server senden
+                try {
+                    serverConnection.switchTemperature().execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -119,14 +137,14 @@ public class HomeFragment extends Fragment {
     private void setupEffectSwitch(View view) {
         final Switch effectSwitch = view.findViewById(R.id.homeSwitchToDo);
         //todo: Switch-Informationen vom Server ziehen und in der nächsten Zeile "false" ersetzen
-        effectSwitch.setChecked(false);
+        effectSwitch.setChecked(getEffectState());
         effectSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
-                    //todo: Switch-Informationen an Server senden
-                }
-                if(!isChecked) {
-                    //todo: Switch-Informationen an Server senden
+                //todo: Switch-Informationen an Server senden
+                try {
+                    serverConnection.switchEffect().execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -146,6 +164,71 @@ public class HomeFragment extends Fragment {
         } else {
             return settingsList.get(0).isNotificationEnabled();
         }
+    }
+
+    private boolean getClockState() {
+        String clockState = "";
+        try {
+            clockState = serverConnection.getClockState().execute().body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (clockState == "1") {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean getTodoState() {
+        String todoState = "";
+        try {
+            todoState = serverConnection.getTodoState().execute().body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(todoState == "1") {
+            return true;
+        }
+        return  false;
+    }
+
+    private boolean getTimerState() {
+        String timerState = "";
+        try {
+            timerState = serverConnection.getTimerState().execute().body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(timerState == "1") {
+            return true;
+        }
+        return  false;
+    }
+
+    private boolean getTemperatureState() {
+        String temperatureState = "";
+        try {
+            temperatureState = serverConnection.getTemperatureState().execute().body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(temperatureState == "1") {
+            return true;
+        }
+        return  false;
+    }
+
+    private boolean getEffectState() {
+        String effectState = "";
+        try {
+            effectState = serverConnection.getEffectState().execute().body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(effectState == "1") {
+            return true;
+        }
+        return  false;
     }
 
     private boolean isNotificationServiceEnabled(){

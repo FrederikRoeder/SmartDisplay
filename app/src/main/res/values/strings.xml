@@ -11,6 +11,7 @@
     <string name="add_todo">ToDo hinzufügen</string>
     <string name="add_timer">Timer hinzufügen</string>
     <string name="notification_switch">Benachrichtigungen anzeigen</string>
+    <string name="clock_switch">Uhrzeit anzeigen</string>
     <string name="todo_switch">ToDo-Liste anzeigen</string>
     <string name="timer_switch">Timer anzeigen</string>
     <string name="temp_switch">Temperatur anzeigen</string>

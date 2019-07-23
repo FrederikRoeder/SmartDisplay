@@ -9,9 +9,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
+import java.io.IOException;
+
 import de.fhws.smartdisplay.R;
+import de.fhws.smartdisplay.server.ConnectionFactory;
+import de.fhws.smartdisplay.server.ServerConnection;
 
 public class TimerPopup extends DialogFragment {
+
+    private ServerConnection serverConnection;
 
     public static TimerPopup newInstance() {
         TimerPopup frag = new TimerPopup();
@@ -24,6 +30,8 @@ public class TimerPopup extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.popup_timer, null);
 
+        serverConnection = new ConnectionFactory().buildConnection();
+
         final EditText textInput = view.findViewById(R.id.editTextTimer);
 
         builder.setView(view)
@@ -32,8 +40,15 @@ public class TimerPopup extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         final String inputText = getInputText(textInput);
+                        //todo: Eingabe in Ablauf-Uhrzeit umwandeln
                         //todo: Time an Server schicken
-
+                        if(!inputText.isEmpty()) {
+                            try {
+                                serverConnection.addTimer(inputText).execute();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
                         TimerPopup.DialogListener listener = (TimerPopup.DialogListener) getTargetFragment();
                         listener.updateResult();
                     }
