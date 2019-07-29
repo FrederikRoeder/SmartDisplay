@@ -51,6 +51,7 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
                 updateTodoList();
             }
         });
+
         return view;
     }
 

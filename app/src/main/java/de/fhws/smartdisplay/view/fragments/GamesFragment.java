@@ -42,6 +42,7 @@ public class GamesFragment extends Fragment {
                 //todo: open game 3
             }
         });
+
         return view;
     }
 }

@@ -29,6 +29,8 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
     private ArrayAdapter<String> adapter;
     private ServerConnection serverConnection;
 
+    private TextView timeView;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -53,6 +55,7 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
                 updateTimerList();
             }
         });
+
         return view;
     }
 
@@ -93,11 +96,6 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
         });
     }
 
-    private void setupTimeView(View view) {
-        TextView timeView = view.findViewById(R.id.textViewTime);
-        //todo: aktuelle Zeit bis zum nächsten Alarm einfügen
-    }
-
     private void updateTimerList() {
         //todo: aktualisierte und sortierte Timer vom Server ziehen und in "timer" (next line) speichern
         List<String> timer = new ArrayList<>();
@@ -110,6 +108,17 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
 
         adapter.clear();
         adapter = new ArrayAdapter<>(getActivity(), R.layout.list_timer, timer);
+
+        updateTimeView();
+    }
+
+    private void setupTimeView(View view) {
+        timeView = view.findViewById(R.id.textViewTime);
+        //todo: Countdown bis zum nächsten Alarm anzeigen
+    }
+
+    private void updateTimeView() {
+        //timeVieew.
     }
 
     private void openTimerPopup() {

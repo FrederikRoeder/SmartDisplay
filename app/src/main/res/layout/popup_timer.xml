@@ -11,12 +11,34 @@
         android:text="@string/add_timer"
         android:textSize="24sp" />
 
-    <EditText
-        android:id="@+id/editTextTimer"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/time"
-        android:inputType="textPersonName" />
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/editTextTimerH"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="5"
+            android:hint="@string/hours"
+            android:inputType="textPersonName" />
+
+        <EditText
+            android:id="@+id/editTextTimerMin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="5"
+            android:hint="@string/minutes"
+            android:inputType="textPersonName" />
+
+        <EditText
+            android:id="@+id/editTextTimerSec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="5"
+            android:hint="@string/seconds"
+            android:inputType="textPersonName" />
+    </LinearLayout>
 
 </LinearLayout>

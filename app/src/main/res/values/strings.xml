@@ -8,6 +8,9 @@
     <string name="name">Name</string>
     <string name="todo">ToDo</string>
     <string name="time">00:00</string>
+    <string name="hours">Stunden</string>
+    <string name="minutes">Minuten</string>
+    <string name="seconds">Sekunden</string>
     <string name="add_todo">ToDo hinzufügen</string>
     <string name="add_timer">Timer hinzufügen</string>
     <string name="notification_switch">Benachrichtigungen anzeigen</string>

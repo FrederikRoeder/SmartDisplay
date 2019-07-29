@@ -32,19 +32,24 @@ public class TimerPopup extends DialogFragment {
 
         serverConnection = new ConnectionFactory().buildConnection();
 
-        final EditText textInput = view.findViewById(R.id.editTextTimer);
+        final EditText hourInput = view.findViewById(R.id.editTextTimerH);
+        final EditText minutesInput = view.findViewById(R.id.editTextTimerMin);
+        final EditText secondsInput = view.findViewById(R.id.editTextTimerSec);
 
         builder.setView(view)
                 // Add action buttons
                 .setPositiveButton("Speichern", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        final String inputText = getInputText(textInput);
+                        final String inputHours = getInputText(hourInput);
+                        final String inputMinutes = getInputText(minutesInput);
+                        final String inputSeconds = getInputText(secondsInput);
                         //todo: Eingabe in Ablauf-Uhrzeit umwandeln
+                        final String time = "";
                         //todo: Time an Server schicken
-                        if(!inputText.isEmpty()) {
+                        if(!inputHours.isEmpty() ) {
                             try {
-                                serverConnection.addTimer(inputText).execute();
+                                serverConnection.addTimer(time).execute();
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }

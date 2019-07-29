@@ -15,32 +15,47 @@ public interface ServerConnection {
     @GET("clockState")
     Call<String> getClockState();
 
-    @GET("clockSwitch")
-    Call<String> switchClock();
+    @GET("clockSwitchOn")
+    Call<String> switchClockOn();
+
+    @GET("clockSwitchOff")
+    Call<String> switchClockOff();
 
     @GET("todoState")
     Call<String> getTodoState();
 
-    @GET("todoSwitch")
-    Call<String> switchTodo();
+    @GET("todoSwitchOn")
+    Call<String> switchTodoOn();
+
+    @GET("todoSwitchOff")
+    Call<String> switchTodoOff();
 
     @GET("timerState")
     Call<String> getTimerState();
 
-    @GET("timerSwitch")
-    Call<String> switchTimer();
+    @GET("timerSwitchOn")
+    Call<String> switchTimerOn();
+
+    @GET("timerSwitchOff")
+    Call<String> switchTimerOff();
 
     @GET("temperatureState")
     Call<String> getTemperatureState();
 
-    @GET("temperatureSwitch")
-    Call<String> switchTemperature();
+    @GET("temperatureSwitchOn")
+    Call<String> switchTemperatureOn();
+
+    @GET("temperatureSwitchOff")
+    Call<String> switchTemperatureOff();
 
     @GET("effectState")
     Call<String> getEffectState();
 
-    @GET("effectSwitch")
-    Call<String> switchEffect();
+    @GET("effectSwitchOn")
+    Call<String> switchEffectOn();
+
+    @GET("effectSwitchOff")
+    Call<String> switchEffectOff();
 
     @GET("todoGet")
     Call<List<String>> getTodoList();
@@ -62,6 +77,9 @@ public interface ServerConnection {
 
     @POST("notification")
     Call<Void> sendNotification(@Body String notification);
+
+    @POST("notificationApp")
+    Call<Void> sendNotificationApp(@Body String notificationApp);
 
     @POST("name")
     Call<Void> sendName(@Body String name);
