@@ -8,8 +8,13 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import de.fhws.smartdisplay.R;
 import de.fhws.smartdisplay.server.ConnectionFactory;
@@ -32,7 +37,7 @@ public class TimerPopup extends DialogFragment {
 
         serverConnection = new ConnectionFactory().buildConnection();
 
-        final EditText hourInput = view.findViewById(R.id.editTextTimerH);
+        final EditText hoursInput = view.findViewById(R.id.editTextTimerH);
         final EditText minutesInput = view.findViewById(R.id.editTextTimerMin);
         final EditText secondsInput = view.findViewById(R.id.editTextTimerSec);
 
@@ -41,13 +46,11 @@ public class TimerPopup extends DialogFragment {
                 .setPositiveButton("Speichern", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        final String inputHours = getInputText(hourInput);
+                        final String inputHours = getInputText(hoursInput);
                         final String inputMinutes = getInputText(minutesInput);
                         final String inputSeconds = getInputText(secondsInput);
-                        //todo: Eingabe in Ablauf-Uhrzeit umwandeln
-                        final String time = "";
-                        //todo: Time an Server schicken
-                        if(!inputHours.isEmpty() ) {
+                        if(checkInputText(inputHours, inputMinutes, inputSeconds)) {
+                            final String time = convertTime(inputHours, inputMinutes, inputSeconds);
                             try {
                                 serverConnection.addTimer(time).execute();
                             } catch (IOException e) {
@@ -68,6 +71,83 @@ public class TimerPopup extends DialogFragment {
 
     private String getInputText(EditText textInput) {
         return textInput.getText().toString();
+    }
+
+    private boolean checkInputText(String h, String m, String s) {
+        if((h.isEmpty() && m.isEmpty() && s.isEmpty()) ||
+                ((h.equals("0") || h.equals("00")) && (m.equals("0") || m.equals("00")) && (s.equals("0") || s.equals("00")))) {
+            return false;
+        }
+        if((h.isEmpty() || h.matches("([0-1]?[0-9])|(2[0-3])")) &&
+                (m.isEmpty() || m.matches("([0-5]?[0-9])")) &&
+                (s.isEmpty() || s.matches("([0-5]?[0-9])"))) {
+            return true;
+        }
+        Toast.makeText(getContext(), "Ungültige Eingabe", Toast.LENGTH_LONG).show();
+        return false;
+    }
+
+    private String convertTime(String h, String m, String s) {
+        int intH = 0;
+        int intM = 0;
+        int intS = 0;
+        if(!h.isEmpty()) {
+            intH = Integer.parseInt(h);
+        }
+        if(!m.isEmpty()) {
+            intM = Integer.parseInt(m);
+        }
+        if(!s.isEmpty()) {
+            intS = Integer.parseInt(s);
+        }
+
+        Calendar calendar = Calendar.getInstance();
+        Date date = calendar.getTime();
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+        String time = dateFormat.format(date);
+
+        String timeH = time.substring(0, 2);
+        int intTimeH = Integer.parseInt(timeH);
+        String timeM = time.substring(3, 5);
+        int intTimeM = Integer.parseInt(timeM);
+        String timeS = time.substring(6);
+        int intTimeS = Integer.parseInt(timeS);
+
+        int tempM = 0;
+        int tempH = 0;
+        intTimeS += intS;
+        if(intTimeS > 59) {
+            tempM = intTimeS / 60;
+            intTimeS = intTimeS % 60;
+        }
+        intTimeM += (intM + tempM);
+        if(intTimeM > 59) {
+            tempH = intTimeM / 60;
+            intTimeM = intTimeM % 60;
+        }
+        intTimeH += (intH + tempH);
+        if(intTimeM > 23) {
+            intTimeH = intTimeM % 24;
+        }
+
+        if(intTimeH < 10) {
+            timeH = "0" + intTimeH;
+        } else {
+            timeH = "" + intTimeH;
+        }
+        if(intTimeM < 10) {
+            timeM = "0" + intTimeM;
+        } else {
+            timeM = "" + intTimeM;
+        }
+        if(intTimeS < 10) {
+            timeS = "0" + intTimeS;
+        } else {
+            timeS = "" + intTimeS;
+        }
+        String destinationTime = timeH + ":" + timeM + ":" + timeS;
+
+        return destinationTime;
     }
 
     public interface DialogListener {

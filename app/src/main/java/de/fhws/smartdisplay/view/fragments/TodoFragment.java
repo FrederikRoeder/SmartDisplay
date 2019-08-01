@@ -56,7 +56,6 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
     }
 
     private void setupTodoList(View view) {
-        //todo: ToDos vom Server ziehen und in "todos" (next line) speichern
         List<String> todos = new ArrayList<>();
 
         try {
@@ -79,7 +78,6 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 String todo = (String) parent.getItemAtPosition(position);
-                //todo: Server das zu löschende "todo" schicken
                 try {
                     serverConnection.deleteTodo(todo).execute();
                 } catch (IOException e) {
@@ -93,7 +91,6 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
     }
 
     private void updateTodoList() {
-        //todo: aktualisierte ToDos vom Server ziehen und in "todos" (next line) speichern
         List<String> todos = new ArrayList<>();
 
         try {

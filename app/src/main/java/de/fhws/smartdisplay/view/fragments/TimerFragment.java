@@ -16,7 +16,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import de.fhws.smartdisplay.R;
@@ -60,7 +64,6 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
     }
 
     private void setupTimerList(View view) {
-        //todo: sortierte Timer vom Server ziehen und in "timer" (next line) speichern
         List<String> timer = new ArrayList<>();
 
         try {
@@ -83,7 +86,6 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 String timer = (String) parent.getItemAtPosition(position);
-                //todo: Server den zu löschenden "timer" schicken
                 try {
                     serverConnection.deleteTimer(timer).execute();
                 } catch (IOException e) {
@@ -97,7 +99,6 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
     }
 
     private void updateTimerList() {
-        //todo: aktualisierte und sortierte Timer vom Server ziehen und in "timer" (next line) speichern
         List<String> timer = new ArrayList<>();
 
         try {
@@ -114,11 +115,55 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
 
     private void setupTimeView(View view) {
         timeView = view.findViewById(R.id.textViewTime);
+        String timer = (String) adapter.getItem(0);
+
+        String timerH = timer.substring(0, 2);
+        int intTimerH = Integer.parseInt(timerH);
+        String timerM = timer.substring(3, 5);
+        int intTimerM = Integer.parseInt(timerM);
+        String timerS = timer.substring(6);
+        int intTimerS = Integer.parseInt(timerS);
+
+        Calendar calendar = Calendar.getInstance();
+        Date date = calendar.getTime();
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+        String time = dateFormat.format(date);
+
+        String timeH = time.substring(0, 2);
+        int intTimeH = Integer.parseInt(timeH);
+        String timeM = time.substring(3, 5);
+        int intTimeM = Integer.parseInt(timeM);
+        String timeS = time.substring(6);
+        int intTimeS = Integer.parseInt(timeS);
+
+        int tempM = 0;
+        int tempH = 0;
+        if(intTimerS - intTimeS < 0) {
+            intTimeS = (intTimerS + 60) - intTimeS;
+            tempM = 1;
+        } else {
+            intTimeS = intTimerS - intTimeS;
+        }
+        if(intTimerM - intTimeM - tempM < 0) {
+            intTimeM = (intTimerM + 60) - intTimeM - tempM;
+            tempH = 1;
+        } else {
+            intTimeM = intTimerM - intTimeM - tempM;
+        }
+        if(intTimerH - intTimeH - tempH < 0) {
+            intTimeH = (intTimerH + 24) - intTimeH - tempH;
+        } else {
+            intTimeH = intTimerH - intTimeH - tempH;
+        }
+
+        String countdown = intTimeH + ":" + intTimeM + ":" + intTimeS;
+
         //todo: Countdown bis zum nächsten Alarm anzeigen
     }
 
     private void updateTimeView() {
-        //timeVieew.
+        //todo: Countdown aktualisieren
+        //timeView.
     }
 
     private void openTimerPopup() {

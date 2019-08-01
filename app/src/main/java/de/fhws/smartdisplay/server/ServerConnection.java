@@ -7,8 +7,8 @@ import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
-
 
 public interface ServerConnection {
 
@@ -21,6 +21,9 @@ public interface ServerConnection {
     @GET("clockSwitchOff")
     Call<String> switchClockOff();
 
+    @PUT("clockSwitch")
+    Call<Void> switchClock(@Body String switchState);
+
     @GET("todoState")
     Call<String> getTodoState();
 
@@ -29,6 +32,9 @@ public interface ServerConnection {
 
     @GET("todoSwitchOff")
     Call<String> switchTodoOff();
+
+    @PUT("todoSwitch")
+    Call<Void> switchTodo(@Body String switchState);
 
     @GET("timerState")
     Call<String> getTimerState();
@@ -39,6 +45,9 @@ public interface ServerConnection {
     @GET("timerSwitchOff")
     Call<String> switchTimerOff();
 
+    @PUT("timerSwitch")
+    Call<Void> switchTimer(@Body String switchState);
+
     @GET("temperatureState")
     Call<String> getTemperatureState();
 
@@ -47,6 +56,9 @@ public interface ServerConnection {
 
     @GET("temperatureSwitchOff")
     Call<String> switchTemperatureOff();
+
+    @PUT("temperatureSwitch")
+    Call<Void> switchTemperature(@Body String switchState);
 
     @GET("effectState")
     Call<String> getEffectState();
@@ -57,13 +69,16 @@ public interface ServerConnection {
     @GET("effectSwitchOff")
     Call<String> switchEffectOff();
 
+    @PUT("effectSwitch")
+    Call<Void> switchEffect(@Body String switchState);
+
     @GET("todoGet")
     Call<List<String>> getTodoList();
 
     @POST("todoAdd")
     Call<Void> addTodo(@Body String todo);
 
-    @DELETE("todoDel/{todo}")
+    @PUT("todoDel/{todo}")
     Call<Void> deleteTodo(@Path("todo") String todo);
 
     @GET("timerGet")
@@ -72,7 +87,7 @@ public interface ServerConnection {
     @POST("timerAdd")
     Call<Void> addTimer(@Body String timer);
 
-    @DELETE("timerDel/{timer}")
+    @PUT("timerDel/{timer}")
     Call<Void> deleteTimer(@Path("timer") String timer);
 
     @POST("notification")

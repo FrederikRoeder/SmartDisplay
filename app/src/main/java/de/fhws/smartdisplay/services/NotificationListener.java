@@ -73,8 +73,17 @@ public class NotificationListener extends NotificationListenerService {
     }
 
     private String getNameFromSettings() {
-        SettingsData settingsData = dataSource.getAll().get(0);
-        return settingsData.getName();
+        List<SettingsData> settingsList = dataSource.getAll();
+        if(settingsList.isEmpty()) {
+            SettingsData settingsData = new SettingsData();
+            dataSource.create(settingsData);
+        }
+        if(settingsList.size() > 1) {
+            dataSource.deleteAll();
+            SettingsData settingsData = new SettingsData();
+            dataSource.create(settingsData);
+        }
+        return settingsList.get(0).getName();
     }
 
     private boolean getNotificationState() {

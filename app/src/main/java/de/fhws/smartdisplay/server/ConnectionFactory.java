@@ -1,7 +1,5 @@
 package de.fhws.smartdisplay.server;
 
-import java.io.IOException;
-
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 

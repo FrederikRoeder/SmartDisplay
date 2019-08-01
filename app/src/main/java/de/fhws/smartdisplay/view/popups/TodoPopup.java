@@ -40,7 +40,6 @@ public class TodoPopup extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         final String inputText = getInputText(textInput);
-                        //todo: Todo an Server schicken
                         if(!inputText.isEmpty()) {
                             try {
                                 serverConnection.addTodo(inputText).execute();

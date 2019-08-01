@@ -63,14 +63,12 @@ public class SettingsFragment extends Fragment {
         if(settingsList.isEmpty()) {
             SettingsData settingsData = new SettingsData();
             dataSource.create(settingsData);
-            return "";
-        } else if(settingsList.size() > 1) {
+        }
+        if(settingsList.size() > 1) {
             dataSource.deleteAll();
             SettingsData settingsData = new SettingsData();
             dataSource.create(settingsData);
-            return "";
-        } else {
-            return settingsList.get(0).getName();
         }
+        return settingsList.get(0).getName();
     }
 }

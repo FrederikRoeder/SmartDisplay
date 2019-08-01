@@ -22,7 +22,13 @@
             android:layout_height="wrap_content"
             android:ems="5"
             android:hint="@string/hours"
-            android:inputType="textPersonName" />
+            android:inputType="number" />
+
+        <TextView
+            android:id="@+id/textViewSpacer1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/spacer" />
 
         <EditText
             android:id="@+id/editTextTimerMin"
@@ -30,7 +36,13 @@
             android:layout_height="wrap_content"
             android:ems="5"
             android:hint="@string/minutes"
-            android:inputType="textPersonName" />
+            android:inputType="number" />
+
+        <TextView
+            android:id="@+id/textViewSpacer2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/spacer" />
 
         <EditText
             android:id="@+id/editTextTimerSec"
@@ -38,7 +50,7 @@
             android:layout_height="wrap_content"
             android:ems="5"
             android:hint="@string/seconds"
-            android:inputType="textPersonName" />
+            android:inputType="number" />
     </LinearLayout>
 
 </LinearLayout>

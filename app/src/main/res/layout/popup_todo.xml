@@ -17,6 +17,6 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="@string/todo"
-        android:inputType="textPersonName" />
+        android:inputType="text" />
 
 </LinearLayout>

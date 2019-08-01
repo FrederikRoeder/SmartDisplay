@@ -42,7 +42,6 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = getLayoutInflater().inflate(R.layout.fragment_home, container, false);
-        final View v = getLayoutInflater().inflate(R.layout.fragment_home, container, false);
 
         dataSource = new SettingsDataSource(this.getContext());
         serverConnection = new ConnectionFactory().buildConnection();
@@ -89,15 +88,13 @@ public class HomeFragment extends Fragment {
 
     private void setupClockSwitch(View view) {
         clockSwitch = view.findViewById(R.id.homeSwitchClock);
-
-        //todo: Switch-Informationen vom Server ziehen und in der nächsten Zeile "false" ersetzen
         clockSwitch.setChecked(getClockState());
         clockSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                //todo: Switch-Informationen an Server senden
                 if(isChecked) {
                     try {
                         serverConnection.switchClockOn().execute();
+                        //serverConnection.switchClock("1").execute();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -105,6 +102,7 @@ public class HomeFragment extends Fragment {
                 if(!isChecked) {
                     try {
                         serverConnection.switchClockOff().execute();
+                        //serverConnection.switchClock("0").execute();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -115,15 +113,13 @@ public class HomeFragment extends Fragment {
 
     private void setupTodoSwitch(View view) {
         todoSwitch = view.findViewById(R.id.homeSwitchToDo);
-
-        //todo: Switch-Informationen vom Server ziehen und in der nächsten Zeile "false" ersetzen
         todoSwitch.setChecked(getTodoState());
         todoSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                //todo: Switch-Informationen an Server senden
                 if(isChecked) {
                     try {
                         serverConnection.switchTodoOn().execute();
+                        //serverConnection.switchTodo("1").execute();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -131,6 +127,7 @@ public class HomeFragment extends Fragment {
                 if(!isChecked) {
                     try {
                         serverConnection.switchTodoOff().execute();
+                        //serverConnection.switchTodo("0").execute();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -141,15 +138,13 @@ public class HomeFragment extends Fragment {
 
     private void setupTimerSwitch(View view) {
         timerSwitch = view.findViewById(R.id.homeSwitchTimer);
-
-        //todo: Switch-Informationen vom Server ziehen und in der nächsten Zeile "false" ersetzen
         timerSwitch.setChecked(getTimerState());
         timerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                //todo: Switch-Informationen an Server senden
                 if(isChecked) {
                     try {
                         serverConnection.switchTimerOn().execute();
+                        //serverConnection.switchTimer("1").execute();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -157,6 +152,7 @@ public class HomeFragment extends Fragment {
                 if(!isChecked) {
                     try {
                         serverConnection.switchTimerOff().execute();
+                        //serverConnection.switchTimer("0").execute();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -167,15 +163,13 @@ public class HomeFragment extends Fragment {
 
     private void setupTempSwitch(View view) {
         tempSwitch = view.findViewById(R.id.homeSwitchTemp);
-
-        //todo: Switch-Informationen vom Server ziehen und in der nächsten Zeile "false" ersetzen
         tempSwitch.setChecked(getTemperatureState());
         tempSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                //todo: Switch-Informationen an Server senden
                 if(isChecked) {
                     try {
                         serverConnection.switchTemperatureOn().execute();
+                        //serverConnection.switchTemperature("1").execute();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -183,6 +177,7 @@ public class HomeFragment extends Fragment {
                 if(!isChecked) {
                     try {
                         serverConnection.switchTemperatureOff().execute();
+                        //serverConnection.switchTemperature("0").execute();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -193,15 +188,13 @@ public class HomeFragment extends Fragment {
 
     private void setupEffectSwitch(View view) {
         effectSwitch = view.findViewById(R.id.homeSwitchEffect);
-
-        //todo: Switch-Informationen vom Server ziehen und in der nächsten Zeile "false" ersetzen
         effectSwitch.setChecked(getEffectState());
         effectSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                //todo: Switch-Informationen an Server senden
                 if(isChecked) {
                     try {
                         serverConnection.switchEffectOn().execute();
+                        //serverConnection.switchEffect("1").execute();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -209,6 +202,7 @@ public class HomeFragment extends Fragment {
                 if(!isChecked) {
                     try {
                         serverConnection.switchEffectOff().execute();
+                        //serverConnection.switchEffect("0").execute();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
