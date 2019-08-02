@@ -43,7 +43,8 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
         serverConnection = new ConnectionFactory().buildConnection();
 
         setupTimerList(view);
-        setupTimeView(view);
+        timeView = view.findViewById(R.id.textViewTime);
+        calcCountdown();
 
         FloatingActionButton addTimer = view.findViewById(R.id.floatingActionButtonTimer);
         addTimer.setOnClickListener(new View.OnClickListener() {
@@ -110,12 +111,15 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
         adapter.clear();
         adapter = new ArrayAdapter<>(getActivity(), R.layout.list_timer, timer);
 
-        updateTimeView();
+        calcCountdown();
     }
 
-    private void setupTimeView(View view) {
-        timeView = view.findViewById(R.id.textViewTime);
-        String timer = (String) adapter.getItem(0);
+    private void calcCountdown() {
+
+        //todo: Countdown bis zum nächsten Alarm anzeigen
+
+        if(adapter.isEmpty() || adapter.getItem(0).isEmpty()) return;
+        String timer = adapter.getItem(0);
 
         String timerH = timer.substring(0, 2);
         int intTimerH = Integer.parseInt(timerH);
@@ -156,14 +160,28 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
             intTimeH = intTimerH - intTimeH - tempH;
         }
 
-        String countdown = intTimeH + ":" + intTimeM + ":" + intTimeS;
+        if(intTimeH < 10) {
+            timeH = "0" + intTimeH;
+        } else {
+            timeH = "" + intTimeH;
+        }
+        if(intTimeM < 10) {
+            timeM = "0" + intTimeM;
+        } else {
+            timeM = "" + intTimeM;
+        }
+        if(intTimeS < 10) {
+            timeS = "0" + intTimeS;
+        } else {
+            timeS = "" + intTimeS;
+        }
+        String countdown = timeH + ":" + timeM + ":" + timeS;
 
-        //todo: Countdown bis zum nächsten Alarm anzeigen
-    }
+        timeView.setText(countdown);
 
-    private void updateTimeView() {
-        //todo: Countdown aktualisieren
-        //timeView.
+        if(intTimeH <= 0 && intTimeM <= 0 && intTimeS <=0) {
+            updateTimerList();
+        }
     }
 
     private void openTimerPopup() {

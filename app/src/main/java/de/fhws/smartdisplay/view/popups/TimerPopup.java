@@ -88,17 +88,17 @@ public class TimerPopup extends DialogFragment {
     }
 
     private String convertTime(String h, String m, String s) {
-        int intH = 0;
-        int intM = 0;
-        int intS = 0;
+        int intTimerH = 0;
+        int intTimerM = 0;
+        int intTimerS = 0;
         if(!h.isEmpty()) {
-            intH = Integer.parseInt(h);
+            intTimerH = Integer.parseInt(h);
         }
         if(!m.isEmpty()) {
-            intM = Integer.parseInt(m);
+            intTimerM = Integer.parseInt(m);
         }
         if(!s.isEmpty()) {
-            intS = Integer.parseInt(s);
+            intTimerS = Integer.parseInt(s);
         }
 
         Calendar calendar = Calendar.getInstance();
@@ -115,17 +115,17 @@ public class TimerPopup extends DialogFragment {
 
         int tempM = 0;
         int tempH = 0;
-        intTimeS += intS;
+        intTimeS += intTimerS;
         if(intTimeS > 59) {
-            tempM = intTimeS / 60;
             intTimeS = intTimeS % 60;
+            tempM = 1;
         }
-        intTimeM += (intM + tempM);
+        intTimeM += (intTimerM + tempM);
         if(intTimeM > 59) {
-            tempH = intTimeM / 60;
             intTimeM = intTimeM % 60;
+            tempH = 1;
         }
-        intTimeH += (intH + tempH);
+        intTimeH += (intTimerH + tempH);
         if(intTimeM > 23) {
             intTimeH = intTimeM % 24;
         }
