@@ -33,19 +33,7 @@ public class SettingsFragment extends Fragment {
 
         dataSource = new SettingsDataSource(this.getContext());
 
-        final EditText editTextName = view.findViewById(R.id.editTextName);
-        editTextName.setText(getName());
-
-        editTextName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
-                    SettingsData settingsData = dataSource.getAll().get(0);
-                    settingsData.setName(editTextName.getText().toString());
-                    dataSource.update(settingsData);
-                }
-                return false;
-            }
-        });
+        setupEditTextName(view);
 
         ImageButton buttonAllowNotifications = view.findViewById(R.id.imageButtonAllowNotifications);
         buttonAllowNotifications.setOnClickListener(new View.OnClickListener() {
@@ -58,7 +46,30 @@ public class SettingsFragment extends Fragment {
         return view;
     }
 
+    private void setupEditTextName(View view) {
+        final EditText editTextName = view.findViewById(R.id.editTextName);
+
+        setupDB();
+        editTextName.setText(getName());
+
+        editTextName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    SettingsData settingsData = dataSource.getAll().get(0);
+                    settingsData.setName(editTextName.getText().toString());
+                    dataSource.update(settingsData);
+                }
+                return false;
+            }
+        });
+    }
+
     private String getName() {
+        List<SettingsData> settingsList = dataSource.getAll();
+        return settingsList.get(0).getName();
+    }
+
+    private void setupDB() {
         List<SettingsData> settingsList = dataSource.getAll();
         if(settingsList.isEmpty()) {
             SettingsData settingsData = new SettingsData();
@@ -69,6 +80,5 @@ public class SettingsFragment extends Fragment {
             SettingsData settingsData = new SettingsData();
             dataSource.create(settingsData);
         }
-        return settingsList.get(0).getName();
     }
 }

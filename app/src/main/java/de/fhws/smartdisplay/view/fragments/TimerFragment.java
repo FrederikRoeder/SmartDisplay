@@ -25,8 +25,12 @@ import java.util.List;
 
 import de.fhws.smartdisplay.R;
 import de.fhws.smartdisplay.server.ConnectionFactory;
+import de.fhws.smartdisplay.server.CustomeCallback;
 import de.fhws.smartdisplay.server.ServerConnection;
 import de.fhws.smartdisplay.view.popups.TimerPopup;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class TimerFragment extends Fragment implements TimerPopup.DialogListener {
 
@@ -34,6 +38,8 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
     private ServerConnection serverConnection;
 
     private TextView timeView;
+    private ListView timerList;
+    private List<String> timer;
 
     @Nullable
     @Override
@@ -42,9 +48,8 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
 
         serverConnection = new ConnectionFactory().buildConnection();
 
-        setupTimerList(view);
+        timerList = view.findViewById(R.id.timerList);
         timeView = view.findViewById(R.id.textViewTime);
-        calcCountdown();
 
         FloatingActionButton addTimer = view.findViewById(R.id.floatingActionButtonTimer);
         addTimer.setOnClickListener(new View.OnClickListener() {
@@ -64,16 +69,26 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
         return view;
     }
 
-    private void setupTimerList(View view) {
-        List<String> timer = new ArrayList<>();
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setupTimerList();
+        calcCountdown();
+    }
 
-        try {
-            timer = serverConnection.getTimerList().execute().body();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void setupTimerList() {
+        timer = new ArrayList<>();
 
-        ListView timerList = view.findViewById(R.id.timerList);
+        getRequestGeneric(serverConnection.getTimerList(), new CustomeCallback<List<String>>() {
+            @Override
+            public void onResponse(List<String> value) {
+                timer = value;
+            }
+
+            @Override
+            public void onFailure() {
+            }
+        });
 
         adapter = new ArrayAdapter<>(getActivity(), R.layout.list_timer, timer);
         timerList.setAdapter(adapter);
@@ -100,13 +115,18 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
     }
 
     private void updateTimerList() {
-        List<String> timer = new ArrayList<>();
+        timer = new ArrayList<>();
 
-        try {
-            timer = serverConnection.getTimerList().execute().body();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        getRequestGeneric(serverConnection.getTimerList(), new CustomeCallback<List<String>>() {
+            @Override
+            public void onResponse(List<String> value) {
+                timer = value;
+            }
+
+            @Override
+            public void onFailure() {
+            }
+        });
 
         adapter.clear();
         adapter = new ArrayAdapter<>(getActivity(), R.layout.list_timer, timer);
@@ -188,6 +208,20 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
         TimerPopup timerPopup = TimerPopup.newInstance();
         timerPopup.setTargetFragment(this, 0);
         timerPopup.show(getActivity().getSupportFragmentManager(), "TimerPopup");
+    }
+
+    public <T> void getRequestGeneric(Call<T> call, final CustomeCallback<T> callback){
+        call.enqueue(new Callback<T>() {
+            @Override
+            public void onResponse(Call<T> call, Response<T> response) {
+                callback.onResponse(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<T> call, Throwable t) {
+                callback.onFailure();
+            }
+        });
     }
 
     @Override

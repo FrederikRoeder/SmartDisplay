@@ -20,13 +20,20 @@ import java.util.List;
 
 import de.fhws.smartdisplay.R;
 import de.fhws.smartdisplay.server.ConnectionFactory;
+import de.fhws.smartdisplay.server.CustomeCallback;
 import de.fhws.smartdisplay.server.ServerConnection;
 import de.fhws.smartdisplay.view.popups.TodoPopup;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
 
     private ArrayAdapter<String> adapter;
     private ServerConnection serverConnection;
+
+    private ListView todoList;
+    private List<String> todos;
 
     @Nullable
     @Override
@@ -35,7 +42,7 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
 
         serverConnection = new ConnectionFactory().buildConnection();
 
-        setupTodoList(view);
+        todoList = view.findViewById(R.id.todoList);
 
         FloatingActionButton addTodo = view.findViewById(R.id.floatingActionButtonTodo);
         addTodo.setOnClickListener(new View.OnClickListener() {
@@ -55,16 +62,25 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
         return view;
     }
 
-    private void setupTodoList(View view) {
-        List<String> todos = new ArrayList<>();
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setupTodoList();
+    }
 
-        try {
-            todos = serverConnection.getTodoList().execute().body();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void setupTodoList() {
+        todos = new ArrayList<>();
 
-        ListView todoList = view.findViewById(R.id.todoList);
+        getRequestGeneric(serverConnection.getTodoList(), new CustomeCallback<List<String>>() {
+            @Override
+            public void onResponse(List<String> value) {
+                todos = value;
+            }
+
+            @Override
+            public void onFailure() {
+            }
+        });
 
         adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, todos);
         todoList.setAdapter(adapter);
@@ -91,13 +107,18 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
     }
 
     private void updateTodoList() {
-        List<String> todos = new ArrayList<>();
+        todos = new ArrayList<>();
 
-        try {
-            todos = serverConnection.getTodoList().execute().body();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        getRequestGeneric(serverConnection.getTodoList(), new CustomeCallback<List<String>>() {
+            @Override
+            public void onResponse(List<String> value) {
+                todos = value;
+            }
+
+            @Override
+            public void onFailure() {
+            }
+        });
 
         adapter.clear();
         adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, todos);
@@ -107,6 +128,20 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
         TodoPopup todoPopup = TodoPopup.newInstance();
         todoPopup.setTargetFragment(this, 0);
         todoPopup.show(getActivity().getSupportFragmentManager(), "TodoPopup");
+    }
+
+    public <T> void getRequestGeneric(Call<T> call, final CustomeCallback<T> callback){
+        call.enqueue(new Callback<T>() {
+            @Override
+            public void onResponse(Call<T> call, Response<T> response) {
+                callback.onResponse(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<T> call, Throwable t) {
+                callback.onFailure();
+            }
+        });
     }
 
     @Override

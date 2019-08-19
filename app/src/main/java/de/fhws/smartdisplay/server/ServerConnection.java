@@ -16,10 +16,10 @@ public interface ServerConnection {
     Call<String> getClockState();
 
     @GET("clockSwitchOn")
-    Call<String> switchClockOn();
+    Call<Void> switchClockOn();
 
     @GET("clockSwitchOff")
-    Call<String> switchClockOff();
+    Call<Void> switchClockOff();
 
     @PUT("clockSwitch")
     Call<Void> switchClock(@Body String switchState);
@@ -28,10 +28,10 @@ public interface ServerConnection {
     Call<String> getTodoState();
 
     @GET("todoSwitchOn")
-    Call<String> switchTodoOn();
+    Call<Void> switchTodoOn();
 
     @GET("todoSwitchOff")
-    Call<String> switchTodoOff();
+    Call<Void> switchTodoOff();
 
     @PUT("todoSwitch")
     Call<Void> switchTodo(@Body String switchState);
@@ -40,10 +40,10 @@ public interface ServerConnection {
     Call<String> getTimerState();
 
     @GET("timerSwitchOn")
-    Call<String> switchTimerOn();
+    Call<Void> switchTimerOn();
 
     @GET("timerSwitchOff")
-    Call<String> switchTimerOff();
+    Call<Void> switchTimerOff();
 
     @PUT("timerSwitch")
     Call<Void> switchTimer(@Body String switchState);
@@ -52,10 +52,10 @@ public interface ServerConnection {
     Call<String> getTemperatureState();
 
     @GET("temperatureSwitchOn")
-    Call<String> switchTemperatureOn();
+    Call<Void> switchTemperatureOn();
 
     @GET("temperatureSwitchOff")
-    Call<String> switchTemperatureOff();
+    Call<Void> switchTemperatureOff();
 
     @PUT("temperatureSwitch")
     Call<Void> switchTemperature(@Body String switchState);
@@ -64,10 +64,10 @@ public interface ServerConnection {
     Call<String> getEffectState();
 
     @GET("effectSwitchOn")
-    Call<String> switchEffectOn();
+    Call<Void> switchEffectOn();
 
     @GET("effectSwitchOff")
-    Call<String> switchEffectOff();
+    Call<Void> switchEffectOff();
 
     @PUT("effectSwitch")
     Call<Void> switchEffect(@Body String switchState);
@@ -78,8 +78,8 @@ public interface ServerConnection {
     @POST("todoAdd")
     Call<Void> addTodo(@Body String todo);
 
-    @PUT("todoDel/{todo}")
-    Call<Void> deleteTodo(@Path("todo") String todo);
+    @PUT("todoDel")
+    Call<Void> deleteTodo(@Body String todo);
 
     @GET("timerGet")
     Call<List<String>> getTimerList();
@@ -87,16 +87,12 @@ public interface ServerConnection {
     @POST("timerAdd")
     Call<Void> addTimer(@Body String timer);
 
-    @PUT("timerDel/{timer}")
-    Call<Void> deleteTimer(@Path("timer") String timer);
+    @PUT("timerDel")
+    Call<Void> deleteTimer(@Body String timer);
 
     @POST("notification")
-    Call<Void> sendNotification(@Body String notification);
-
-    @POST("notificationApp")
-    Call<Void> sendNotificationApp(@Body String notificationApp);
-
-    @POST("name")
-    Call<Void> sendName(@Body String name);
+    Call<Void> sendNotification(@Body String user,
+                                @Body String app,
+                                @Body String notification);
 
 }

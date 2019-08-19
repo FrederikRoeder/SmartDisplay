@@ -2,11 +2,13 @@ package de.fhws.smartdisplay.view.fragments;
 
 import android.content.ComponentName;
 import android.os.Bundle;
+import android.os.NetworkOnMainThreadException;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +24,11 @@ import de.fhws.smartdisplay.R;
 import de.fhws.smartdisplay.database.SettingsData;
 import de.fhws.smartdisplay.database.SettingsDataSource;
 import de.fhws.smartdisplay.server.ConnectionFactory;
+import de.fhws.smartdisplay.server.CustomeCallback;
 import de.fhws.smartdisplay.server.ServerConnection;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class HomeFragment extends Fragment {
 
@@ -46,6 +52,7 @@ public class HomeFragment extends Fragment {
         dataSource = new SettingsDataSource(this.getContext());
         serverConnection = new ConnectionFactory().buildConnection();
 
+        setupDB();
         setupNotificationSwitch(view);
         setupClockSwitch(view);
         setupTodoSwitch(view);
@@ -63,14 +70,40 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setNotificationState();
+        setClockState();
+        setTodoState();
+        setTimerState();
+        setTemperatureState();
+        setEffectState();
+    }
+
+    private void setupDB() {
+        List<SettingsData> settingsList = dataSource.getAll();
+        if(settingsList.isEmpty()) {
+            SettingsData settingsData = new SettingsData();
+            dataSource.create(settingsData);
+        }
+        if(settingsList.size() > 1) {
+            dataSource.deleteAll();
+            SettingsData settingsData = new SettingsData();
+            dataSource.create(settingsData);
+        }
+    }
+
     private void setupNotificationSwitch(View view) {
         notificationSwitch = view.findViewById(R.id.homeSwitchNotification);
-        notificationSwitch.setChecked(getNotificationState());
         notificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(!isNotificationServiceEnabled()) {
                     Toast.makeText(getContext(), "Zugriff auf Notifications in Einstellungen erlauben!", Toast.LENGTH_LONG).show();
                     notificationSwitch.setChecked(false);
+                    SettingsData settingsData = dataSource.getAll().get(0);
+                    settingsData.setNotificationEnabled(false);
+                    dataSource.update(settingsData);
                 }
                 if(isChecked) {
                     SettingsData settingsData = dataSource.getAll().get(0);
@@ -86,15 +119,22 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    private void setNotificationState() {
+        List<SettingsData> settingsList = dataSource.getAll();
+        notificationSwitch.setChecked(settingsList.get(0).isNotificationEnabled());
+    }
+
     private void setupClockSwitch(View view) {
         clockSwitch = view.findViewById(R.id.homeSwitchClock);
-        clockSwitch.setChecked(getClockState());
         clockSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
                     try {
                         serverConnection.switchClockOn().execute();
                         //serverConnection.switchClock("1").execute();
+                    } catch (NetworkOnMainThreadException e) {
+                        Toast.makeText(getContext(), "Fehler!", Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -103,6 +143,9 @@ public class HomeFragment extends Fragment {
                     try {
                         serverConnection.switchClockOff().execute();
                         //serverConnection.switchClock("0").execute();
+                    } catch (NetworkOnMainThreadException e) {
+                        Toast.makeText(getContext(), "Fehler!", Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -111,9 +154,22 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    private void setClockState() {
+        getRequestGeneric(serverConnection.getClockState(), new CustomeCallback<String>() {
+            @Override
+            public void onResponse(String value) {
+                clockSwitch.setChecked(value == "1");
+            }
+
+            @Override
+            public void onFailure() {
+                clockSwitch.setChecked(false);
+            }
+        });
+    }
+
     private void setupTodoSwitch(View view) {
         todoSwitch = view.findViewById(R.id.homeSwitchToDo);
-        todoSwitch.setChecked(getTodoState());
         todoSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
@@ -136,9 +192,22 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    private void setTodoState() {
+        getRequestGeneric(serverConnection.getTodoState(), new CustomeCallback<String>() {
+            @Override
+            public void onResponse(String value) {
+                todoSwitch.setChecked(value == "1");
+            }
+
+            @Override
+            public void onFailure() {
+                todoSwitch.setChecked(false);
+            }
+        });
+    }
+
     private void setupTimerSwitch(View view) {
         timerSwitch = view.findViewById(R.id.homeSwitchTimer);
-        timerSwitch.setChecked(getTimerState());
         timerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
@@ -161,9 +230,22 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    private void setTimerState() {
+        getRequestGeneric(serverConnection.getTimerState(), new CustomeCallback<String>() {
+            @Override
+            public void onResponse(String value) {
+                timerSwitch.setChecked(value == "1");
+            }
+
+            @Override
+            public void onFailure() {
+                timerSwitch.setChecked(false);
+            }
+        });
+    }
+
     private void setupTempSwitch(View view) {
         tempSwitch = view.findViewById(R.id.homeSwitchTemp);
-        tempSwitch.setChecked(getTemperatureState());
         tempSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
@@ -186,9 +268,22 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    private void setTemperatureState() {
+        getRequestGeneric(serverConnection.getTemperatureState(), new CustomeCallback<String>() {
+            @Override
+            public void onResponse(String value) {
+                tempSwitch.setChecked(value == "1");
+            }
+
+            @Override
+            public void onFailure() {
+                tempSwitch.setChecked(false);
+            }
+        });
+    }
+
     private void setupEffectSwitch(View view) {
         effectSwitch = view.findViewById(R.id.homeSwitchEffect);
-        effectSwitch.setChecked(getEffectState());
         effectSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
@@ -211,85 +306,27 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private boolean getNotificationState() {
-        List<SettingsData> settingsList = dataSource.getAll();
-        if(settingsList.isEmpty()) {
-            SettingsData settingsData = new SettingsData();
-            dataSource.create(settingsData);
-            return false;
-        } else if(settingsList.size() > 1) {
-            dataSource.deleteAll();
-            SettingsData settingsData = new SettingsData();
-            dataSource.create(settingsData);
-            return false;
-        } else {
-            return settingsList.get(0).isNotificationEnabled();
-        }
+    private void setEffectState() {
+        getRequestGeneric(serverConnection.getEffectState(), new CustomeCallback<String>() {
+            @Override
+            public void onResponse(String value) {
+                effectSwitch.setChecked(value == "1");
+            }
+
+            @Override
+            public void onFailure() {
+                effectSwitch.setChecked(false);
+            }
+        });
     }
 
-    private boolean getClockState() {
-        String clockState = "";
-        try {
-            clockState = serverConnection.getClockState().execute().body();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (clockState == "1") {
-            return true;
-        }
-        return false;
-    }
-
-    private boolean getTodoState() {
-        String todoState = "";
-        try {
-            todoState = serverConnection.getTodoState().execute().body();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if(todoState == "1") {
-            return true;
-        }
-        return false;
-    }
-
-    private boolean getTimerState() {
-        String timerState = "";
-        try {
-            timerState = serverConnection.getTimerState().execute().body();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if(timerState == "1") {
-            return true;
-        }
-        return false;
-    }
-
-    private boolean getTemperatureState() {
-        String temperatureState = "";
-        try {
-            temperatureState = serverConnection.getTemperatureState().execute().body();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if(temperatureState == "1") {
-            return true;
-        }
-        return false;
-    }
-
-    private boolean getEffectState() {
-        String effectState = "";
-        try {
-            effectState = serverConnection.getEffectState().execute().body();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if(effectState == "1") {
-            return true;
-        }
-        return false;
+    private void refreshSwitches() {
+        setNotificationState();
+        setClockState();
+        setTodoState();
+        setTimerState();
+        setTemperatureState();
+        setEffectState();
     }
 
     private boolean isNotificationServiceEnabled(){
@@ -310,12 +347,17 @@ public class HomeFragment extends Fragment {
         return false;
     }
 
-    private void refreshSwitches() {
-        notificationSwitch.setChecked(getNotificationState());
-        clockSwitch.setChecked(getClockState());
-        todoSwitch.setChecked(getTodoState());
-        timerSwitch.setChecked(getTimerState());
-        tempSwitch.setChecked(getTemperatureState());
-        effectSwitch.setChecked(getEffectState());
+    public <T> void getRequestGeneric(Call<T> call, final CustomeCallback<T> callback){
+        call.enqueue(new Callback<T>() {
+            @Override
+            public void onResponse(Call<T> call, Response<T> response) {
+                callback.onResponse(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<T> call, Throwable t) {
+                callback.onFailure();
+            }
+        });
     }
 }

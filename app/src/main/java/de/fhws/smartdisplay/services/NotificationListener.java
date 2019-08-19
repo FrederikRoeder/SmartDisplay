@@ -24,6 +24,8 @@ public class NotificationListener extends NotificationListenerService {
 
         dataSource = new SettingsDataSource(this);
         serverConnection = new ConnectionFactory().buildConnection();
+
+        setupDB();
     }
 
     @Override
@@ -44,9 +46,10 @@ public class NotificationListener extends NotificationListenerService {
                 if(extras.containsKey("android.text") && extras.getCharSequence("android.text") != null) {
                     text = extras.getCharSequence("android.text").toString();
 
-                    sendNotification(text);
-
+                    String app = "WhatsApp";
                     Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+
+                    sendNotification(text, app);
                 }
             }
             //todo: prüfen ob Nachricht SMS  / WhatsApp / Insta / Snapchat / Facebook / ... -Nachricht ist
@@ -59,14 +62,9 @@ public class NotificationListener extends NotificationListenerService {
     public void onNotificationRemoved(StatusBarNotification sbn) {
     }
 
-    private void sendNotification(String notification) {
+    private void sendNotification(String notification, String app) {
         try {
-            serverConnection.sendName(getNameFromSettings()).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            serverConnection.sendNotification(notification).execute();
+            serverConnection.sendNotification(getNameFromSettings(), app, notification).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -88,17 +86,19 @@ public class NotificationListener extends NotificationListenerService {
 
     private boolean getNotificationState() {
         List<SettingsData> settingsList = dataSource.getAll();
+        return settingsList.get(0).isNotificationEnabled();
+    }
+
+    private void setupDB() {
+        List<SettingsData> settingsList = dataSource.getAll();
         if(settingsList.isEmpty()) {
             SettingsData settingsData = new SettingsData();
             dataSource.create(settingsData);
-            return false;
-        } else if(settingsList.size() > 1) {
+        }
+        if(settingsList.size() > 1) {
             dataSource.deleteAll();
             SettingsData settingsData = new SettingsData();
             dataSource.create(settingsData);
-            return false;
-        } else {
-            return settingsList.get(0).isNotificationEnabled();
         }
     }
 }
