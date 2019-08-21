@@ -529,7 +529,8 @@ public class HomeFragment extends Fragment {
                     Handler handler = new Handler(Looper.getMainLooper());
                     handler.post(new Runnable() {
                         public void run() {
-                            effectSwitch.setChecked(response.body() == "1");                        }
+                            effectSwitch.setChecked(response.body() == "1");
+                        }
                     });
                 } else {
                     Handler handler = new Handler(Looper.getMainLooper());
