@@ -14,6 +14,9 @@ import java.io.IOException;
 import de.fhws.smartdisplay.R;
 import de.fhws.smartdisplay.server.ConnectionFactory;
 import de.fhws.smartdisplay.server.ServerConnection;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class TodoPopup extends DialogFragment {
 
@@ -41,11 +44,17 @@ public class TodoPopup extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         final String inputText = getInputText(textInput);
                         if(!inputText.isEmpty()) {
-                            try {
-                                serverConnection.addTodo(inputText).execute();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            serverConnection.addTodo(inputText).enqueue(new Callback<Void>() {
+                                @Override
+                                public void onResponse(Call<Void> call, Response<Void> response) {
+
+                                }
+
+                                @Override
+                                public void onFailure(Call<Void> call, Throwable t) {
+
+                                }
+                            });
                         }
                         DialogListener listener = (DialogListener) getTargetFragment();
                         listener.updateResult();

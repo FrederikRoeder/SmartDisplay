@@ -2,6 +2,8 @@ package de.fhws.smartdisplay.view.fragments;
 
 import android.content.ComponentName;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.NetworkOnMainThreadException;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -41,7 +43,6 @@ public class HomeFragment extends Fragment {
     private Switch clockSwitch;
     private Switch todoSwitch;
     private Switch timerSwitch;
-    private Switch tempSwitch;
     private Switch effectSwitch;
 
     @Nullable
@@ -57,7 +58,6 @@ public class HomeFragment extends Fragment {
         setupClockSwitch(view);
         setupTodoSwitch(view);
         setupTimerSwitch(view);
-        setupTempSwitch(view);
         setupEffectSwitch(view);
 
         ImageButton refreshButton = view.findViewById(R.id.imageButtonRefreshHome);
@@ -77,7 +77,6 @@ public class HomeFragment extends Fragment {
         setClockState();
         setTodoState();
         setTimerState();
-        setTemperatureState();
         setEffectState();
     }
 
@@ -99,8 +98,8 @@ public class HomeFragment extends Fragment {
         notificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(!isNotificationServiceEnabled()) {
-                    Toast.makeText(getContext(), "Zugriff auf Notifications in Einstellungen erlauben!", Toast.LENGTH_LONG).show();
                     notificationSwitch.setChecked(false);
+                    Toast.makeText(getContext(), "Zugriff auf Notifications in Einstellungen erlauben!", Toast.LENGTH_LONG).show();
                     SettingsData settingsData = dataSource.getAll().get(0);
                     settingsData.setNotificationEnabled(false);
                     dataSource.update(settingsData);
@@ -120,8 +119,10 @@ public class HomeFragment extends Fragment {
     }
 
     private void setNotificationState() {
-        List<SettingsData> settingsList = dataSource.getAll();
-        notificationSwitch.setChecked(settingsList.get(0).isNotificationEnabled());
+        if(isNotificationServiceEnabled()) {
+            List<SettingsData> settingsList = dataSource.getAll();
+            notificationSwitch.setChecked(settingsList.get(0).isNotificationEnabled());
+        }
     }
 
     private void setupClockSwitch(View view) {
@@ -129,41 +130,104 @@ public class HomeFragment extends Fragment {
         clockSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
-                    try {
-                        serverConnection.switchClockOn().execute();
-                        //serverConnection.switchClock("1").execute();
-                    } catch (NetworkOnMainThreadException e) {
-                        Toast.makeText(getContext(), "Fehler!", Toast.LENGTH_LONG).show();
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    serverConnection.switchClockOn().enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if(!response.isSuccessful()) {
+                                Handler handler = new Handler(Looper.getMainLooper());
+                                handler.post(new Runnable() {
+                                    public void run() {
+                                        clockSwitch.setChecked(false);
+                                        Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    clockSwitch.setChecked(false);
+                                    Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                    });
                 }
+
                 if(!isChecked) {
-                    try {
-                        serverConnection.switchClockOff().execute();
-                        //serverConnection.switchClock("0").execute();
-                    } catch (NetworkOnMainThreadException e) {
-                        Toast.makeText(getContext(), "Fehler!", Toast.LENGTH_LONG).show();
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    serverConnection.switchClockOff().enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if(!response.isSuccessful()) {
+                                Handler handler = new Handler(Looper.getMainLooper());
+                                handler.post(new Runnable() {
+                                    public void run() {
+                                        clockSwitch.setChecked(false);
+                                        Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    clockSwitch.setChecked(false);
+                                    Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                    });
                 }
             }
         });
     }
 
     private void setClockState() {
-        getRequestGeneric(serverConnection.getClockState(), new CustomeCallback<String>() {
+//        getRequestGeneric(serverConnection.getClockState(), new CustomeCallback<String>() {
+//            @Override
+//            public void onResponse(String value) {
+//                clockSwitch.setChecked(value == "1");
+//            }
+//
+//            @Override
+//            public void onFailure() {
+//                clockSwitch.setChecked(false);
+//            }
+//        });
+
+        serverConnection.getClockState().enqueue(new Callback<String>() {
             @Override
-            public void onResponse(String value) {
-                clockSwitch.setChecked(value == "1");
+            public void onResponse(Call<String> call, final Response<String> response) {
+                if(response.isSuccessful()) {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        public void run() {
+                            clockSwitch.setChecked(response.body() == "1");                        }
+                    });
+                } else {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        public void run() {
+                            clockSwitch.setChecked(false);
+                        }
+                    });
+                }
             }
 
             @Override
-            public void onFailure() {
-                clockSwitch.setChecked(false);
+            public void onFailure(Call<String> call, Throwable t) {
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                    public void run() {
+                        clockSwitch.setChecked(false);
+                    }
+                });
             }
         });
     }
@@ -173,35 +237,104 @@ public class HomeFragment extends Fragment {
         todoSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
-                    try {
-                        serverConnection.switchTodoOn().execute();
-                        //serverConnection.switchTodo("1").execute();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    serverConnection.switchTodoOn().enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if(!response.isSuccessful()) {
+                                Handler handler = new Handler(Looper.getMainLooper());
+                                handler.post(new Runnable() {
+                                    public void run() {
+                                        todoSwitch.setChecked(false);
+                                        Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    todoSwitch.setChecked(false);
+                                    Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                    });
                 }
+
                 if(!isChecked) {
-                    try {
-                        serverConnection.switchTodoOff().execute();
-                        //serverConnection.switchTodo("0").execute();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    serverConnection.switchTodoOff().enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if(!response.isSuccessful()) {
+                                Handler handler = new Handler(Looper.getMainLooper());
+                                handler.post(new Runnable() {
+                                    public void run() {
+                                        todoSwitch.setChecked(false);
+                                        Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    todoSwitch.setChecked(false);
+                                    Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                    });
                 }
             }
         });
     }
 
     private void setTodoState() {
-        getRequestGeneric(serverConnection.getTodoState(), new CustomeCallback<String>() {
+//        getRequestGeneric(serverConnection.getTodoState(), new CustomeCallback<String>() {
+//            @Override
+//            public void onResponse(String value) {
+//                todoSwitch.setChecked(value == "1");
+//            }
+//
+//            @Override
+//            public void onFailure() {
+//                todoSwitch.setChecked(false);
+//            }
+//        });
+
+        serverConnection.getTodoState().enqueue(new Callback<String>() {
             @Override
-            public void onResponse(String value) {
-                todoSwitch.setChecked(value == "1");
+            public void onResponse(Call<String> call, final Response<String> response) {
+                if(response.isSuccessful()) {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        public void run() {
+                            todoSwitch.setChecked(response.body() == "1");                        }
+                    });
+                } else {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        public void run() {
+                            todoSwitch.setChecked(false);
+                        }
+                    });
+                }
             }
 
             @Override
-            public void onFailure() {
-                todoSwitch.setChecked(false);
+            public void onFailure(Call<String> call, Throwable t) {
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                    public void run() {
+                        todoSwitch.setChecked(false);
+                    }
+                });
             }
         });
     }
@@ -211,73 +344,104 @@ public class HomeFragment extends Fragment {
         timerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
-                    try {
-                        serverConnection.switchTimerOn().execute();
-                        //serverConnection.switchTimer("1").execute();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    serverConnection.switchTimerOn().enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if(!response.isSuccessful()) {
+                                Handler handler = new Handler(Looper.getMainLooper());
+                                handler.post(new Runnable() {
+                                    public void run() {
+                                        timerSwitch.setChecked(false);
+                                        Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    timerSwitch.setChecked(false);
+                                    Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                    });
                 }
+
                 if(!isChecked) {
-                    try {
-                        serverConnection.switchTimerOff().execute();
-                        //serverConnection.switchTimer("0").execute();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    serverConnection.switchTimerOff().enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if(!response.isSuccessful()) {
+                                Handler handler = new Handler(Looper.getMainLooper());
+                                handler.post(new Runnable() {
+                                    public void run() {
+                                        timerSwitch.setChecked(false);
+                                        Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    timerSwitch.setChecked(false);
+                                    Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                    });
                 }
             }
         });
     }
 
     private void setTimerState() {
-        getRequestGeneric(serverConnection.getTimerState(), new CustomeCallback<String>() {
-            @Override
-            public void onResponse(String value) {
-                timerSwitch.setChecked(value == "1");
-            }
+//        getRequestGeneric(serverConnection.getTimerState(), new CustomeCallback<String>() {
+//            @Override
+//            public void onResponse(String value) {
+//                timerSwitch.setChecked(value == "1");
+//            }
+//
+//            @Override
+//            public void onFailure() {
+//                timerSwitch.setChecked(false);
+//            }
+//        });
 
+        serverConnection.getTimerState().enqueue(new Callback<String>() {
             @Override
-            public void onFailure() {
-                timerSwitch.setChecked(false);
-            }
-        });
-    }
-
-    private void setupTempSwitch(View view) {
-        tempSwitch = view.findViewById(R.id.homeSwitchTemp);
-        tempSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
-                    try {
-                        serverConnection.switchTemperatureOn().execute();
-                        //serverConnection.switchTemperature("1").execute();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if(!isChecked) {
-                    try {
-                        serverConnection.switchTemperatureOff().execute();
-                        //serverConnection.switchTemperature("0").execute();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+            public void onResponse(Call<String> call, final Response<String> response) {
+                if(response.isSuccessful()) {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        public void run() {
+                            timerSwitch.setChecked(response.body() == "1");                        }
+                    });
+                } else {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        public void run() {
+                            timerSwitch.setChecked(false);
+                        }
+                    });
                 }
             }
-        });
-    }
-
-    private void setTemperatureState() {
-        getRequestGeneric(serverConnection.getTemperatureState(), new CustomeCallback<String>() {
-            @Override
-            public void onResponse(String value) {
-                tempSwitch.setChecked(value == "1");
-            }
 
             @Override
-            public void onFailure() {
-                tempSwitch.setChecked(false);
+            public void onFailure(Call<String> call, Throwable t) {
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                    public void run() {
+                        timerSwitch.setChecked(false);
+                    }
+                });
             }
         });
     }
@@ -287,35 +451,104 @@ public class HomeFragment extends Fragment {
         effectSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
-                    try {
-                        serverConnection.switchEffectOn().execute();
-                        //serverConnection.switchEffect("1").execute();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    serverConnection.switchEffectOn().enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if(!response.isSuccessful()) {
+                                Handler handler = new Handler(Looper.getMainLooper());
+                                handler.post(new Runnable() {
+                                    public void run() {
+                                        effectSwitch.setChecked(false);
+                                        Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    effectSwitch.setChecked(false);
+                                    Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                    });
                 }
+
                 if(!isChecked) {
-                    try {
-                        serverConnection.switchEffectOff().execute();
-                        //serverConnection.switchEffect("0").execute();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    serverConnection.switchEffectOff().enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if(!response.isSuccessful()) {
+                                Handler handler = new Handler(Looper.getMainLooper());
+                                handler.post(new Runnable() {
+                                    public void run() {
+                                        effectSwitch.setChecked(false);
+                                        Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    effectSwitch.setChecked(false);
+                                    Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                    });
                 }
             }
         });
     }
 
     private void setEffectState() {
-        getRequestGeneric(serverConnection.getEffectState(), new CustomeCallback<String>() {
+//        getRequestGeneric(serverConnection.getEffectState(), new CustomeCallback<String>() {
+//            @Override
+//            public void onResponse(String value) {
+//                effectSwitch.setChecked(value == "1");
+//            }
+//
+//            @Override
+//            public void onFailure() {
+//                effectSwitch.setChecked(false);
+//            }
+//        });
+
+        serverConnection.getEffectState().enqueue(new Callback<String>() {
             @Override
-            public void onResponse(String value) {
-                effectSwitch.setChecked(value == "1");
+            public void onResponse(Call<String> call, final Response<String> response) {
+                if(response.isSuccessful()) {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        public void run() {
+                            effectSwitch.setChecked(response.body() == "1");                        }
+                    });
+                } else {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        public void run() {
+                            effectSwitch.setChecked(false);
+                        }
+                    });
+                }
             }
 
             @Override
-            public void onFailure() {
-                effectSwitch.setChecked(false);
+            public void onFailure(Call<String> call, Throwable t) {
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                    public void run() {
+                        effectSwitch.setChecked(false);
+                    }
+                });
             }
         });
     }
@@ -325,7 +558,6 @@ public class HomeFragment extends Fragment {
         setClockState();
         setTodoState();
         setTimerState();
-        setTemperatureState();
         setEffectState();
     }
 
@@ -347,17 +579,17 @@ public class HomeFragment extends Fragment {
         return false;
     }
 
-    public <T> void getRequestGeneric(Call<T> call, final CustomeCallback<T> callback){
-        call.enqueue(new Callback<T>() {
-            @Override
-            public void onResponse(Call<T> call, Response<T> response) {
-                callback.onResponse(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<T> call, Throwable t) {
-                callback.onFailure();
-            }
-        });
-    }
+//    public <T> void getRequestGeneric(Call<T> call, final CustomeCallback<T> callback){
+//        call.enqueue(new Callback<T>() {
+//            @Override
+//            public void onResponse(Call<T> call, Response<T> response) {
+//                callback.onResponse(response.body());
+//            }
+//
+//            @Override
+//            public void onFailure(Call<T> call, Throwable t) {
+//                callback.onFailure();
+//            }
+//        });
+//    }
 }

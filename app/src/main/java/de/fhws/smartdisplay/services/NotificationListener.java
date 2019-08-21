@@ -12,6 +12,9 @@ import de.fhws.smartdisplay.database.SettingsData;
 import de.fhws.smartdisplay.database.SettingsDataSource;
 import de.fhws.smartdisplay.server.ConnectionFactory;
 import de.fhws.smartdisplay.server.ServerConnection;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class NotificationListener extends NotificationListenerService {
 
@@ -63,11 +66,17 @@ public class NotificationListener extends NotificationListenerService {
     }
 
     private void sendNotification(String notification, String app) {
-        try {
-            serverConnection.sendNotification(getNameFromSettings(), app, notification).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        serverConnection.sendNotification(getNameFromSettings(), app, notification).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+
+            }
+        });
     }
 
     private String getNameFromSettings() {

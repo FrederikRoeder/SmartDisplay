@@ -19,6 +19,9 @@ import java.util.Date;
 import de.fhws.smartdisplay.R;
 import de.fhws.smartdisplay.server.ConnectionFactory;
 import de.fhws.smartdisplay.server.ServerConnection;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class TimerPopup extends DialogFragment {
 
@@ -51,11 +54,17 @@ public class TimerPopup extends DialogFragment {
                         final String inputSeconds = getInputText(secondsInput);
                         if(checkInputText(inputHours, inputMinutes, inputSeconds)) {
                             final String time = convertTime(inputHours, inputMinutes, inputSeconds);
-                            try {
-                                serverConnection.addTimer(time).execute();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            serverConnection.addTimer(time).enqueue(new Callback<Void>() {
+                                @Override
+                                public void onResponse(Call<Void> call, Response<Void> response) {
+
+                                }
+
+                                @Override
+                                public void onFailure(Call<Void> call, Throwable t) {
+
+                                }
+                            });
                         }
                         TimerPopup.DialogListener listener = (TimerPopup.DialogListener) getTargetFragment();
                         listener.updateResult();

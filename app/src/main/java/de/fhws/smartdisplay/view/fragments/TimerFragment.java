@@ -1,6 +1,8 @@
 package de.fhws.smartdisplay.view.fragments;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -79,14 +81,33 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
     private void setupTimerList() {
         timer = new ArrayList<>();
 
-        getRequestGeneric(serverConnection.getTimerList(), new CustomeCallback<List<String>>() {
+//        getRequestGeneric(serverConnection.getTimerList(), new CustomeCallback<List<String>>() {
+//            @Override
+//            public void onResponse(List<String> value) {
+//                timer = value;
+//            }
+//
+//            @Override
+//            public void onFailure() {
+//            }
+//        });
+
+        serverConnection.getTimerList().enqueue(new Callback<List<String>>() {
             @Override
-            public void onResponse(List<String> value) {
-                timer = value;
+            public void onResponse(Call<List<String>> call, final Response<List<String>> response) {
+                if(response.isSuccessful()) {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        public void run() {
+                            timer = response.body();
+                        }
+                    });
+                }
             }
 
             @Override
-            public void onFailure() {
+            public void onFailure(Call<List<String>> call, Throwable t) {
+
             }
         });
 
@@ -102,11 +123,17 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 String timer = (String) parent.getItemAtPosition(position);
-                try {
-                    serverConnection.deleteTimer(timer).execute();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                serverConnection.deleteTimer(timer).enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+
+                    }
+                });
                 updateTimerList();
                 Toast.makeText(getContext(), "Timer gelöscht", Toast.LENGTH_LONG).show();
                 return true;
@@ -117,14 +144,33 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
     private void updateTimerList() {
         timer = new ArrayList<>();
 
-        getRequestGeneric(serverConnection.getTimerList(), new CustomeCallback<List<String>>() {
+//        getRequestGeneric(serverConnection.getTimerList(), new CustomeCallback<List<String>>() {
+//            @Override
+//            public void onResponse(List<String> value) {
+//                timer = value;
+//            }
+//
+//            @Override
+//            public void onFailure() {
+//            }
+//        });
+
+        serverConnection.getTimerList().enqueue(new Callback<List<String>>() {
             @Override
-            public void onResponse(List<String> value) {
-                timer = value;
+            public void onResponse(Call<List<String>> call, final Response<List<String>> response) {
+                if(response.isSuccessful()) {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        public void run() {
+                            timer = response.body();
+                        }
+                    });
+                }
             }
 
             @Override
-            public void onFailure() {
+            public void onFailure(Call<List<String>> call, Throwable t) {
+
             }
         });
 
@@ -210,19 +256,19 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
         timerPopup.show(getActivity().getSupportFragmentManager(), "TimerPopup");
     }
 
-    public <T> void getRequestGeneric(Call<T> call, final CustomeCallback<T> callback){
-        call.enqueue(new Callback<T>() {
-            @Override
-            public void onResponse(Call<T> call, Response<T> response) {
-                callback.onResponse(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<T> call, Throwable t) {
-                callback.onFailure();
-            }
-        });
-    }
+//    public <T> void getRequestGeneric(Call<T> call, final CustomeCallback<T> callback){
+//        call.enqueue(new Callback<T>() {
+//            @Override
+//            public void onResponse(Call<T> call, Response<T> response) {
+//                callback.onResponse(response.body());
+//            }
+//
+//            @Override
+//            public void onFailure(Call<T> call, Throwable t) {
+//                callback.onFailure();
+//            }
+//        });
+//    }
 
     @Override
     public void updateResult() {

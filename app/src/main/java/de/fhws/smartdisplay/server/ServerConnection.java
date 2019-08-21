@@ -12,6 +12,9 @@ import retrofit2.http.Path;
 
 public interface ServerConnection {
 
+    @GET("retrospect")
+    Call<String> getRetrospect();
+
     @GET("clockState")
     Call<String> getClockState();
 
@@ -47,18 +50,6 @@ public interface ServerConnection {
 
     @PUT("timerSwitch")
     Call<Void> switchTimer(@Body String switchState);
-
-    @GET("temperatureState")
-    Call<String> getTemperatureState();
-
-    @GET("temperatureSwitchOn")
-    Call<Void> switchTemperatureOn();
-
-    @GET("temperatureSwitchOff")
-    Call<Void> switchTemperatureOff();
-
-    @PUT("temperatureSwitch")
-    Call<Void> switchTemperature(@Body String switchState);
 
     @GET("effectState")
     Call<String> getEffectState();
