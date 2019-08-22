@@ -50,6 +50,7 @@ public class SettingsFragment extends Fragment {
         final EditText editTextName = view.findViewById(R.id.editTextName);
 
         setupDB();
+
         editTextName.setText(getName());
 
         editTextName.setOnEditorActionListener(new TextView.OnEditorActionListener() {

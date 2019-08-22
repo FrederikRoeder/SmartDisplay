@@ -8,6 +8,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.io.IOException;
 
@@ -44,17 +45,21 @@ public class TodoPopup extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         final String inputText = getInputText(textInput);
                         if(!inputText.isEmpty()) {
-                            serverConnection.addTodo(inputText).enqueue(new Callback<Void>() {
-                                @Override
-                                public void onResponse(Call<Void> call, Response<Void> response) {
+                            if(inputText.contains(";")) {
+                                Toast.makeText(getContext(), "Unerlaubtes Zeichen!", Toast.LENGTH_LONG).show();
+                            } else {
+                                serverConnection.addTodo(inputText).enqueue(new Callback<Void>() {
+                                    @Override
+                                    public void onResponse(Call<Void> call, Response<Void> response) {
 
-                                }
+                                    }
 
-                                @Override
-                                public void onFailure(Call<Void> call, Throwable t) {
+                                    @Override
+                                    public void onFailure(Call<Void> call, Throwable t) {
 
-                                }
-                            });
+                                    }
+                                });
+                            }
                         }
                         DialogListener listener = (DialogListener) getTargetFragment();
                         listener.updateResult();

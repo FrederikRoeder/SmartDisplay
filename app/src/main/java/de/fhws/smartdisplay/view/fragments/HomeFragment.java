@@ -4,13 +4,11 @@ import android.content.ComponentName;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.NetworkOnMainThreadException;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,14 +17,14 @@ import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.fhws.smartdisplay.R;
 import de.fhws.smartdisplay.database.SettingsData;
 import de.fhws.smartdisplay.database.SettingsDataSource;
 import de.fhws.smartdisplay.server.ConnectionFactory;
-import de.fhws.smartdisplay.server.CustomeCallback;
 import de.fhws.smartdisplay.server.ServerConnection;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -71,13 +69,13 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onStart() {
+        super.onStart();
         setNotificationState();
-        setClockState();
-        setTodoState();
-        setTimerState();
-        setEffectState();
+        refreshSwitches();
+
+//        Timer timer = new Timer();
+//        timer.schedule(new UpdateTimer(), 20000, 20000);
     }
 
     private void setupDB() {
@@ -130,7 +128,7 @@ public class HomeFragment extends Fragment {
         clockSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
-                    serverConnection.switchClockOn().enqueue(new Callback<Void>() {
+                    serverConnection.switchClock("1").enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
                             if(!response.isSuccessful()) {
@@ -158,7 +156,7 @@ public class HomeFragment extends Fragment {
                 }
 
                 if(!isChecked) {
-                    serverConnection.switchClockOff().enqueue(new Callback<Void>() {
+                    serverConnection.switchClock("0").enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
                             if(!response.isSuccessful()) {
@@ -189,18 +187,6 @@ public class HomeFragment extends Fragment {
     }
 
     private void setClockState() {
-//        getRequestGeneric(serverConnection.getClockState(), new CustomeCallback<String>() {
-//            @Override
-//            public void onResponse(String value) {
-//                clockSwitch.setChecked(value == "1");
-//            }
-//
-//            @Override
-//            public void onFailure() {
-//                clockSwitch.setChecked(false);
-//            }
-//        });
-
         serverConnection.getClockState().enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, final Response<String> response) {
@@ -208,7 +194,7 @@ public class HomeFragment extends Fragment {
                     Handler handler = new Handler(Looper.getMainLooper());
                     handler.post(new Runnable() {
                         public void run() {
-                            clockSwitch.setChecked(response.body() == "1");                        }
+                            clockSwitch.setChecked(response.body().equals("1"));                        }
                     });
                 } else {
                     Handler handler = new Handler(Looper.getMainLooper());
@@ -237,7 +223,7 @@ public class HomeFragment extends Fragment {
         todoSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
-                    serverConnection.switchTodoOn().enqueue(new Callback<Void>() {
+                    serverConnection.switchTodo("1").enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
                             if(!response.isSuccessful()) {
@@ -265,7 +251,7 @@ public class HomeFragment extends Fragment {
                 }
 
                 if(!isChecked) {
-                    serverConnection.switchTodoOff().enqueue(new Callback<Void>() {
+                    serverConnection.switchTodo("0").enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
                             if(!response.isSuccessful()) {
@@ -296,18 +282,6 @@ public class HomeFragment extends Fragment {
     }
 
     private void setTodoState() {
-//        getRequestGeneric(serverConnection.getTodoState(), new CustomeCallback<String>() {
-//            @Override
-//            public void onResponse(String value) {
-//                todoSwitch.setChecked(value == "1");
-//            }
-//
-//            @Override
-//            public void onFailure() {
-//                todoSwitch.setChecked(false);
-//            }
-//        });
-
         serverConnection.getTodoState().enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, final Response<String> response) {
@@ -315,7 +289,7 @@ public class HomeFragment extends Fragment {
                     Handler handler = new Handler(Looper.getMainLooper());
                     handler.post(new Runnable() {
                         public void run() {
-                            todoSwitch.setChecked(response.body() == "1");                        }
+                            todoSwitch.setChecked(response.body().equals("1"));                        }
                     });
                 } else {
                     Handler handler = new Handler(Looper.getMainLooper());
@@ -344,7 +318,7 @@ public class HomeFragment extends Fragment {
         timerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
-                    serverConnection.switchTimerOn().enqueue(new Callback<Void>() {
+                    serverConnection.switchTimer("1").enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
                             if(!response.isSuccessful()) {
@@ -372,7 +346,7 @@ public class HomeFragment extends Fragment {
                 }
 
                 if(!isChecked) {
-                    serverConnection.switchTimerOff().enqueue(new Callback<Void>() {
+                    serverConnection.switchTimer("0").enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
                             if(!response.isSuccessful()) {
@@ -403,18 +377,6 @@ public class HomeFragment extends Fragment {
     }
 
     private void setTimerState() {
-//        getRequestGeneric(serverConnection.getTimerState(), new CustomeCallback<String>() {
-//            @Override
-//            public void onResponse(String value) {
-//                timerSwitch.setChecked(value == "1");
-//            }
-//
-//            @Override
-//            public void onFailure() {
-//                timerSwitch.setChecked(false);
-//            }
-//        });
-
         serverConnection.getTimerState().enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, final Response<String> response) {
@@ -422,7 +384,7 @@ public class HomeFragment extends Fragment {
                     Handler handler = new Handler(Looper.getMainLooper());
                     handler.post(new Runnable() {
                         public void run() {
-                            timerSwitch.setChecked(response.body() == "1");                        }
+                            timerSwitch.setChecked(response.body().equals("1"));                        }
                     });
                 } else {
                     Handler handler = new Handler(Looper.getMainLooper());
@@ -451,7 +413,7 @@ public class HomeFragment extends Fragment {
         effectSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
-                    serverConnection.switchEffectOn().enqueue(new Callback<Void>() {
+                    serverConnection.switchEffect("1").enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
                             if(!response.isSuccessful()) {
@@ -479,7 +441,7 @@ public class HomeFragment extends Fragment {
                 }
 
                 if(!isChecked) {
-                    serverConnection.switchEffectOff().enqueue(new Callback<Void>() {
+                    serverConnection.switchEffect("0").enqueue(new Callback<Void>() {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
                             if(!response.isSuccessful()) {
@@ -510,18 +472,6 @@ public class HomeFragment extends Fragment {
     }
 
     private void setEffectState() {
-//        getRequestGeneric(serverConnection.getEffectState(), new CustomeCallback<String>() {
-//            @Override
-//            public void onResponse(String value) {
-//                effectSwitch.setChecked(value == "1");
-//            }
-//
-//            @Override
-//            public void onFailure() {
-//                effectSwitch.setChecked(false);
-//            }
-//        });
-
         serverConnection.getEffectState().enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, final Response<String> response) {
@@ -529,7 +479,7 @@ public class HomeFragment extends Fragment {
                     Handler handler = new Handler(Looper.getMainLooper());
                     handler.post(new Runnable() {
                         public void run() {
-                            effectSwitch.setChecked(response.body() == "1");
+                            effectSwitch.setChecked(response.body().equals("1"));
                         }
                     });
                 } else {
@@ -555,7 +505,6 @@ public class HomeFragment extends Fragment {
     }
 
     private void refreshSwitches() {
-        setNotificationState();
         setClockState();
         setTodoState();
         setTimerState();
@@ -580,17 +529,14 @@ public class HomeFragment extends Fragment {
         return false;
     }
 
-//    public <T> void getRequestGeneric(Call<T> call, final CustomeCallback<T> callback){
-//        call.enqueue(new Callback<T>() {
-//            @Override
-//            public void onResponse(Call<T> call, Response<T> response) {
-//                callback.onResponse(response.body());
-//            }
-//
-//            @Override
-//            public void onFailure(Call<T> call, Throwable t) {
-//                callback.onFailure();
-//            }
-//        });
-//    }
+    class UpdateTimer extends TimerTask {
+        public void run() {
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(new Runnable() {
+                public void run() {
+                    refreshSwitches();
+                }
+            });
+        }
+    }
 }

@@ -1,11 +1,11 @@
 package de.fhws.smartdisplay.services;
 
+import android.app.Notification;
 import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
-import android.widget.Toast;
+import android.util.Log;
 
-import java.io.IOException;
 import java.util.List;
 
 import de.fhws.smartdisplay.database.SettingsData;
@@ -21,6 +21,8 @@ public class NotificationListener extends NotificationListenerService {
     private SettingsDataSource dataSource;
     private ServerConnection serverConnection;
 
+    private boolean lock;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -28,19 +30,24 @@ public class NotificationListener extends NotificationListenerService {
         dataSource = new SettingsDataSource(this);
         serverConnection = new ConnectionFactory().buildConnection();
 
+        lock = false;
+
         setupDB();
     }
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
         if(getNotificationState()) {
+
+            if ((sbn.getNotification().flags & Notification.FLAG_GROUP_SUMMARY) != 0) {
+                return;
+            }
+
             String pack = "";
-            String ticker = "";
             String title = "";
             String text = "";
 
-            //pack = sbn.getPackageName();
-            //ticker = sbn.getNotification().tickerText.toString();
+            pack = sbn.getPackageName();
             Bundle extras = sbn.getNotification().extras;
             if(!extras.isEmpty()) {
                 if(extras.containsKey("android.title") && extras.getString("android.title") != null) {
@@ -49,15 +56,38 @@ public class NotificationListener extends NotificationListenerService {
                 if(extras.containsKey("android.text") && extras.getCharSequence("android.text") != null) {
                     text = extras.getCharSequence("android.text").toString();
 
-                    String app = "WhatsApp";
-                    Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+                    if(pack.equals(ApplicationPackageNames.SMS_PACK_NAME)) {
+                        sendNotification("Sms");
+                    }
+                    else if(pack.equals(ApplicationPackageNames.WHATSAPP_PACK_NAME)) {
+                        sendNotification("WhatsApp");
+                    }
+                    else if(pack.equals(ApplicationPackageNames.INSTAGRAM_PACK_NAME)) {
+                        sendNotification("Instagram");
+                    }
+                    else if(pack.equals(ApplicationPackageNames.SNAPCHAT_PACK_NAME)) {
+                        sendNotification("Snapchat");
+                    }
+                    else if(pack.equals(ApplicationPackageNames.FACEBOOK_PACK_NAME) || pack.equals(ApplicationPackageNames.FACEBOOKM_PACK_NAME)) {
+                        sendNotification("Facebook");
+                    }
+                    else if(pack.equals(ApplicationPackageNames.TWITTER_PACK_NAME)) {
+                        sendNotification("Twitter");
+                    }
+                    else if(pack.equals(ApplicationPackageNames.MAIL_PACK_NAME) || pack.equals(ApplicationPackageNames.GMAIL_PACK_NAME)) {
+                        sendNotification("Mail");
+                    }
+                    else if(pack.equals(ApplicationPackageNames.PHONE_PACK_NAME)) {
 
-                    sendNotification(text, app);
+                        sendNotification("Telefon");
+                    }
                 }
             }
-            //todo: prüfen ob Nachricht SMS  / WhatsApp / Insta / Snapchat / Facebook / ... -Nachricht ist
-            //todo: prüfen, ob es pack / ticker / title / text gibt
-            //todo: vorhandene Daten (mit Name) an Server schicken
+
+            if(pack.equals(ApplicationPackageNames.PHONE_PACK_NAME) && lock == false) {
+                sendNotification("Telefon");
+                setLock();
+            }
         }
     }
 
@@ -65,8 +95,8 @@ public class NotificationListener extends NotificationListenerService {
     public void onNotificationRemoved(StatusBarNotification sbn) {
     }
 
-    private void sendNotification(String notification, String app) {
-        serverConnection.sendNotification(getNameFromSettings(), app, notification).enqueue(new Callback<Void>() {
+    private void sendNotification(String app) {
+        serverConnection.sendNotification(app, getNameFromSettings()).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
 
@@ -81,21 +111,25 @@ public class NotificationListener extends NotificationListenerService {
 
     private String getNameFromSettings() {
         List<SettingsData> settingsList = dataSource.getAll();
-        if(settingsList.isEmpty()) {
-            SettingsData settingsData = new SettingsData();
-            dataSource.create(settingsData);
-        }
-        if(settingsList.size() > 1) {
-            dataSource.deleteAll();
-            SettingsData settingsData = new SettingsData();
-            dataSource.create(settingsData);
-        }
         return settingsList.get(0).getName();
     }
 
     private boolean getNotificationState() {
         List<SettingsData> settingsList = dataSource.getAll();
         return settingsList.get(0).isNotificationEnabled();
+    }
+
+    private void setLock() {
+        lock = true;
+        new java.util.Timer().schedule(
+                new java.util.TimerTask() {
+                    @Override
+                    public void run() {
+                        lock = false;
+                    }
+                },
+                30000
+        );
     }
 
     private void setupDB() {
@@ -109,5 +143,18 @@ public class NotificationListener extends NotificationListenerService {
             SettingsData settingsData = new SettingsData();
             dataSource.create(settingsData);
         }
+    }
+
+    private static final class ApplicationPackageNames {
+        public static final String SMS_PACK_NAME = "com.samsung.android.messaging";
+        public static final String WHATSAPP_PACK_NAME = "com.whatsapp";
+        public static final String INSTAGRAM_PACK_NAME = "com.instagram.android";
+        public static final String SNAPCHAT_PACK_NAME = "com.snapchat.android";
+        public static final String FACEBOOK_PACK_NAME = "com.facebook.katana";
+        public static final String FACEBOOKM_PACK_NAME = "com.facebook.orca";
+        public static final String TWITTER_PACK_NAME = "com.twitter.android";
+        public static final String MAIL_PACK_NAME = "com.samsung.android.email.provider";
+        public static final String GMAIL_PACK_NAME = "com.google.android.gm";
+        public static final String PHONE_PACK_NAME = "com.samsung.android.incallui";
     }
 }

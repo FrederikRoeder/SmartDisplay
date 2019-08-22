@@ -1,14 +1,14 @@
 package de.fhws.smartdisplay.server;
 
-import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
-import retrofit2.http.Path;
+
 
 public interface ServerConnection {
 
@@ -18,72 +18,56 @@ public interface ServerConnection {
     @GET("clockState")
     Call<String> getClockState();
 
-    @GET("clockSwitchOn")
-    Call<Void> switchClockOn();
-
-    @GET("clockSwitchOff")
-    Call<Void> switchClockOff();
-
     @PUT("clockSwitch")
-    Call<Void> switchClock(@Body String switchState);
+    @FormUrlEncoded
+    Call<Void> switchClock(@Field("switchState") String switchState);
 
     @GET("todoState")
     Call<String> getTodoState();
 
-    @GET("todoSwitchOn")
-    Call<Void> switchTodoOn();
-
-    @GET("todoSwitchOff")
-    Call<Void> switchTodoOff();
-
     @PUT("todoSwitch")
-    Call<Void> switchTodo(@Body String switchState);
+    @FormUrlEncoded
+    Call<Void> switchTodo(@Field("switchState") String switchState);
 
     @GET("timerState")
     Call<String> getTimerState();
 
-    @GET("timerSwitchOn")
-    Call<Void> switchTimerOn();
-
-    @GET("timerSwitchOff")
-    Call<Void> switchTimerOff();
-
     @PUT("timerSwitch")
-    Call<Void> switchTimer(@Body String switchState);
+    @FormUrlEncoded
+    Call<Void> switchTimer(@Field("switchState") String switchState);
 
     @GET("effectState")
     Call<String> getEffectState();
 
-    @GET("effectSwitchOn")
-    Call<Void> switchEffectOn();
-
-    @GET("effectSwitchOff")
-    Call<Void> switchEffectOff();
-
     @PUT("effectSwitch")
-    Call<Void> switchEffect(@Body String switchState);
+    @FormUrlEncoded
+    Call<Void> switchEffect(@Field("switchState") String switchState);
 
     @GET("todoGet")
-    Call<List<String>> getTodoList();
+    Call<String> getTodoList();
 
     @POST("todoAdd")
-    Call<Void> addTodo(@Body String todo);
+    @FormUrlEncoded
+    Call<Void> addTodo(@Field("todo") String todo);
 
     @PUT("todoDel")
-    Call<Void> deleteTodo(@Body String todo);
+    @FormUrlEncoded
+    Call<Void> deleteTodo(@Field("todo") String todo);
 
     @GET("timerGet")
-    Call<List<String>> getTimerList();
+    Call<String> getTimerList();
 
     @POST("timerAdd")
-    Call<Void> addTimer(@Body String timer);
+    @FormUrlEncoded
+    Call<Void> addTimer(@Field("timer") String timer);
 
     @PUT("timerDel")
-    Call<Void> deleteTimer(@Body String timer);
+    @FormUrlEncoded
+    Call<Void> deleteTimer(@Field("timer") String timer);
 
     @POST("notification")
-    Call<Void> sendNotification(@Body String user,
-                                @Body String app,
-                                @Body String notification);
+    @FormUrlEncoded
+    Call<Void> sendNotification(@Field("app") String app,
+                                @Field("user") String user);
 
 }

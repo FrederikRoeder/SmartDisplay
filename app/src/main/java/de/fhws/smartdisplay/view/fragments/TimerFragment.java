@@ -17,17 +17,18 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.fhws.smartdisplay.R;
 import de.fhws.smartdisplay.server.ConnectionFactory;
-import de.fhws.smartdisplay.server.CustomeCallback;
 import de.fhws.smartdisplay.server.ServerConnection;
 import de.fhws.smartdisplay.view.popups.TimerPopup;
 import retrofit2.Call;
@@ -50,7 +51,8 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
 
         serverConnection = new ConnectionFactory().buildConnection();
 
-        timerList = view.findViewById(R.id.timerList);
+        setupTimerList(view);
+
         timeView = view.findViewById(R.id.textViewTime);
 
         FloatingActionButton addTimer = view.findViewById(R.id.floatingActionButtonTimer);
@@ -74,51 +76,25 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setupTimerList();
-        calcCountdown();
+        updateTimerList();
+
+        Timer timerCountdown = new Timer();
+        timerCountdown.schedule(new CountdownTimer(), 0, 1000);
+
+//        Timer timerUpdate = new Timer();
+//        timerUpdate.schedule(new UpdateTimer(), 20000, 20000);
     }
 
-    private void setupTimerList() {
-        timer = new ArrayList<>();
+    private void setupTimerList(View view) {
+        timerList = view.findViewById(R.id.timerList);
 
-//        getRequestGeneric(serverConnection.getTimerList(), new CustomeCallback<List<String>>() {
-//            @Override
-//            public void onResponse(List<String> value) {
-//                timer = value;
-//            }
-//
-//            @Override
-//            public void onFailure() {
-//            }
-//        });
-
-        serverConnection.getTimerList().enqueue(new Callback<List<String>>() {
-            @Override
-            public void onResponse(Call<List<String>> call, final Response<List<String>> response) {
-                if(response.isSuccessful()) {
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable() {
-                        public void run() {
-                            timer = response.body();
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<String>> call, Throwable t) {
-
-            }
-        });
-
-        adapter = new ArrayAdapter<>(getActivity(), R.layout.list_timer, timer);
-        timerList.setAdapter(adapter);
         timerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
             }
         });
+
         timerList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -135,118 +111,127 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
                     }
                 });
                 updateTimerList();
-                Toast.makeText(getContext(), "Timer gelöscht", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Timer wird gelöscht", Toast.LENGTH_LONG).show();
                 return true;
             }
         });
+
+        timer = new ArrayList<>();
+
+        adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, timer);
+        timerList.setAdapter(adapter);
     }
 
     private void updateTimerList() {
         timer = new ArrayList<>();
 
-//        getRequestGeneric(serverConnection.getTimerList(), new CustomeCallback<List<String>>() {
-//            @Override
-//            public void onResponse(List<String> value) {
-//                timer = value;
-//            }
-//
-//            @Override
-//            public void onFailure() {
-//            }
-//        });
-
-        serverConnection.getTimerList().enqueue(new Callback<List<String>>() {
+        serverConnection.getTimerList().enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<List<String>> call, final Response<List<String>> response) {
+            public void onResponse(Call<String> call, final Response<String> response) {
                 if(response.isSuccessful()) {
                     Handler handler = new Handler(Looper.getMainLooper());
                     handler.post(new Runnable() {
                         public void run() {
-                            timer = response.body();
+                            if(response.isSuccessful()) {
+                                timer = Arrays.asList(response.body().split(";"));
+                            }
+                            adapter.clear();
+                            adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, timer);
+                            timerList.setAdapter(adapter);
                         }
                     });
                 }
             }
 
             @Override
-            public void onFailure(Call<List<String>> call, Throwable t) {
-
+            public void onFailure(Call<String> call, Throwable t) {
+                adapter.clear();
+                adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, timer);
+                timerList.setAdapter(adapter);
             }
         });
-
-        adapter.clear();
-        adapter = new ArrayAdapter<>(getActivity(), R.layout.list_timer, timer);
-
-        calcCountdown();
     }
 
     private void calcCountdown() {
-
-        //todo: Countdown bis zum nächsten Alarm anzeigen
-
-        if(adapter.isEmpty() || adapter.getItem(0).isEmpty()) return;
-        String timer = adapter.getItem(0);
-
-        String timerH = timer.substring(0, 2);
-        int intTimerH = Integer.parseInt(timerH);
-        String timerM = timer.substring(3, 5);
-        int intTimerM = Integer.parseInt(timerM);
-        String timerS = timer.substring(6);
-        int intTimerS = Integer.parseInt(timerS);
-
-        Calendar calendar = Calendar.getInstance();
-        Date date = calendar.getTime();
-        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-        String time = dateFormat.format(date);
-
-        String timeH = time.substring(0, 2);
-        int intTimeH = Integer.parseInt(timeH);
-        String timeM = time.substring(3, 5);
-        int intTimeM = Integer.parseInt(timeM);
-        String timeS = time.substring(6);
-        int intTimeS = Integer.parseInt(timeS);
-
-        int tempM = 0;
-        int tempH = 0;
-        if(intTimerS - intTimeS < 0) {
-            intTimeS = (intTimerS + 60) - intTimeS;
-            tempM = 1;
+        Handler handler = new Handler(Looper.getMainLooper());
+        if(adapter.isEmpty() || adapter.getItem(0).isEmpty()) {
+            handler.post(new Runnable() {
+                public void run() {
+                    timeView.setText("00:00:00");
+                }
+            });
         } else {
-            intTimeS = intTimerS - intTimeS;
-        }
-        if(intTimerM - intTimeM - tempM < 0) {
-            intTimeM = (intTimerM + 60) - intTimeM - tempM;
-            tempH = 1;
-        } else {
-            intTimeM = intTimerM - intTimeM - tempM;
-        }
-        if(intTimerH - intTimeH - tempH < 0) {
-            intTimeH = (intTimerH + 24) - intTimeH - tempH;
-        } else {
-            intTimeH = intTimerH - intTimeH - tempH;
-        }
+            String timer = adapter.getItem(0);
 
-        if(intTimeH < 10) {
-            timeH = "0" + intTimeH;
-        } else {
-            timeH = "" + intTimeH;
-        }
-        if(intTimeM < 10) {
-            timeM = "0" + intTimeM;
-        } else {
-            timeM = "" + intTimeM;
-        }
-        if(intTimeS < 10) {
-            timeS = "0" + intTimeS;
-        } else {
-            timeS = "" + intTimeS;
-        }
-        String countdown = timeH + ":" + timeM + ":" + timeS;
+            String timerH = timer.substring(0, 2);
+            int intTimerH = Integer.parseInt(timerH);
+            String timerM = timer.substring(3, 5);
+            int intTimerM = Integer.parseInt(timerM);
+            String timerS = timer.substring(6);
+            int intTimerS = Integer.parseInt(timerS);
 
-        timeView.setText(countdown);
+            Calendar calendar = Calendar.getInstance();
+            Date date = calendar.getTime();
+            DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+            String time = dateFormat.format(date);
 
-        if(intTimeH <= 0 && intTimeM <= 0 && intTimeS <=0) {
-            updateTimerList();
+            String timeH = time.substring(0, 2);
+            int intTimeH = Integer.parseInt(timeH);
+            String timeM = time.substring(3, 5);
+            int intTimeM = Integer.parseInt(timeM);
+            String timeS = time.substring(6);
+            int intTimeS = Integer.parseInt(timeS);
+
+            int tempM = 0;
+            int tempH = 0;
+            if(intTimerS - intTimeS < 0) {
+                intTimeS = (intTimerS + 60) - intTimeS;
+                tempM = 1;
+            } else {
+                intTimeS = intTimerS - intTimeS;
+            }
+            if(intTimerM - intTimeM - tempM < 0) {
+                intTimeM = (intTimerM + 60) - intTimeM - tempM;
+                tempH = 1;
+            } else {
+                intTimeM = intTimerM - intTimeM - tempM;
+            }
+            if(intTimerH - intTimeH - tempH < 0) {
+                intTimeH = (intTimerH + 24) - intTimeH - tempH;
+            } else {
+                intTimeH = intTimerH - intTimeH - tempH;
+            }
+
+            if(intTimeH < 10) {
+                timeH = "0" + intTimeH;
+            } else {
+                timeH = "" + intTimeH;
+            }
+            if(intTimeM < 10) {
+                timeM = "0" + intTimeM;
+            } else {
+                timeM = "" + intTimeM;
+            }
+            if(intTimeS < 10) {
+                timeS = "0" + intTimeS;
+            } else {
+                timeS = "" + intTimeS;
+            }
+            final String countdown = timeH + ":" + timeM + ":" + timeS;
+
+            handler.post(new Runnable() {
+                public void run() {
+                    timeView.setText(countdown);
+                }
+            });
+
+            if(intTimeH <= 0 && intTimeM <= 0 && intTimeS <=0) {
+                handler.post(new Runnable() {
+                    public void run() {
+                        updateTimerList();
+                    }
+                });
+            }
         }
     }
 
@@ -256,22 +241,25 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
         timerPopup.show(getActivity().getSupportFragmentManager(), "TimerPopup");
     }
 
-//    public <T> void getRequestGeneric(Call<T> call, final CustomeCallback<T> callback){
-//        call.enqueue(new Callback<T>() {
-//            @Override
-//            public void onResponse(Call<T> call, Response<T> response) {
-//                callback.onResponse(response.body());
-//            }
-//
-//            @Override
-//            public void onFailure(Call<T> call, Throwable t) {
-//                callback.onFailure();
-//            }
-//        });
-//    }
-
     @Override
     public void updateResult() {
         updateTimerList();
+    }
+
+    class UpdateTimer extends TimerTask {
+        public void run() {
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(new Runnable() {
+                public void run() {
+                    updateTimerList();
+                }
+            });
+        }
+    }
+
+    class CountdownTimer extends TimerTask {
+        public void run() {
+            calcCountdown();
+        }
     }
 }

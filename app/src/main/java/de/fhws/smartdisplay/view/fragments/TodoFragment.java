@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,13 +17,14 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.fhws.smartdisplay.R;
 import de.fhws.smartdisplay.server.ConnectionFactory;
-import de.fhws.smartdisplay.server.CustomeCallback;
 import de.fhws.smartdisplay.server.ServerConnection;
 import de.fhws.smartdisplay.view.popups.TodoPopup;
 import retrofit2.Call;
@@ -44,7 +46,7 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
 
         serverConnection = new ConnectionFactory().buildConnection();
 
-        todoList = view.findViewById(R.id.todoList);
+        setupTodoList(view);
 
         FloatingActionButton addTodo = view.findViewById(R.id.floatingActionButtonTodo);
         addTodo.setOnClickListener(new View.OnClickListener() {
@@ -65,52 +67,24 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        setupTodoList();
+    public void onStart() {
+        super.onStart();
+        updateTodoList();
+
+//        Timer timer = new Timer();
+//        timer.schedule(new UpdateTimer(), 20000, 20000);
     }
 
-    private void setupTodoList() {
-        todos = new ArrayList<>();
+    private void setupTodoList(View view) {
+        todoList = view.findViewById(R.id.todoList);
 
-//        getRequestGeneric(serverConnection.getTodoList(), new CustomeCallback<List<String>>() {
-//            @Override
-//            public void onResponse(List<String> value) {
-//                todos = value;
-//            }
-//
-//            @Override
-//            public void onFailure() {
-//            }
-//        });
-
-        serverConnection.getTodoList().enqueue(new Callback<List<String>>() {
-            @Override
-            public void onResponse(Call<List<String>> call, final Response<List<String>> response) {
-                if(response.isSuccessful()) {
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable() {
-                        public void run() {
-                            todos = response.body();
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<String>> call, Throwable t) {
-
-            }
-        });
-
-        adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, todos);
-        todoList.setAdapter(adapter);
         todoList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
             }
         });
+
         todoList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -127,47 +101,45 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
                     }
                 });
                 updateTodoList();
-                Toast.makeText(getContext(), "ToDo gelöscht", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "ToDo wird gelöscht", Toast.LENGTH_LONG).show();
                 return true;
             }
         });
+
+        todos = new ArrayList<>();
+
+        adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, todos);
+        todoList.setAdapter(adapter);
     }
 
     private void updateTodoList() {
         todos = new ArrayList<>();
 
-//        getRequestGeneric(serverConnection.getTodoList(), new CustomeCallback<List<String>>() {
-//            @Override
-//            public void onResponse(List<String> value) {
-//                todos = value;
-//            }
-//
-//            @Override
-//            public void onFailure() {
-//            }
-//        });
-
-        serverConnection.getTodoList().enqueue(new Callback<List<String>>() {
+        serverConnection.getTodoList().enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<List<String>> call, final Response<List<String>> response) {
+            public void onResponse(Call<String> call, final Response<String> response) {
                 if(response.isSuccessful()) {
                     Handler handler = new Handler(Looper.getMainLooper());
                     handler.post(new Runnable() {
                         public void run() {
-                            todos = response.body();
+                            if(response.isSuccessful()) {
+                                todos = Arrays.asList(response.body().split(";"));
+                            }
+                            adapter.clear();
+                            adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, todos);
+                            todoList.setAdapter(adapter);
                         }
                     });
                 }
             }
 
             @Override
-            public void onFailure(Call<List<String>> call, Throwable t) {
-
+            public void onFailure(Call<String> call, Throwable t) {
+                adapter.clear();
+                adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, todos);
+                todoList.setAdapter(adapter);
             }
         });
-
-        adapter.clear();
-        adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, todos);
     }
 
     private void openTodoPopup() {
@@ -176,22 +148,19 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
         todoPopup.show(getActivity().getSupportFragmentManager(), "TodoPopup");
     }
 
-//    public <T> void getRequestGeneric(Call<T> call, final CustomeCallback<T> callback){
-//        call.enqueue(new Callback<T>() {
-//            @Override
-//            public void onResponse(Call<T> call, Response<T> response) {
-//                callback.onResponse(response.body());
-//            }
-//
-//            @Override
-//            public void onFailure(Call<T> call, Throwable t) {
-//                callback.onFailure();
-//            }
-//        });
-//    }
-
     @Override
     public void updateResult() {
         updateTodoList();
+    }
+
+    class UpdateTimer extends TimerTask {
+        public void run() {
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(new Runnable() {
+                public void run() {
+                    updateTodoList();
+                }
+            });
+        }
     }
 }
