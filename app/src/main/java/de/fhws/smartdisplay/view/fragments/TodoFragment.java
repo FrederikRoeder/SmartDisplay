@@ -67,8 +67,8 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         updateTodoList();
 
 //        Timer timer = new Timer();
@@ -118,26 +118,57 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
         serverConnection.getTodoList().enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, final Response<String> response) {
-                if(response.isSuccessful()) {
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable() {
-                        public void run() {
-                            if(response.isSuccessful()) {
-                                todos = Arrays.asList(response.body().split(";"));
-                            }
-                            adapter.clear();
-                            adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, todos);
-                            todoList.setAdapter(adapter);
+
+
+//##########
+                Log.d("string", "In der onResponse, am Anfang: " + response.body());
+//##########
+
+
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                    public void run() {
+                        if (response.isSuccessful()) {
+
+
+//##########
+                            Log.d("string", "In der onResponse, kein Fehlercode: " + response.body());
+//##########
+
+
+                            todos = Arrays.asList(response.body().split(";"));
                         }
-                    });
-                }
+
+
+//##########
+                        Log.d("string", "In der onResponse, aber Fehlercode");
+//##########
+
+
+                        adapter.clear();
+                        adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, todos);
+                        todoList.setAdapter(adapter);
+                    }
+                });
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                adapter.clear();
-                adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, todos);
-                todoList.setAdapter(adapter);
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                    public void run() {
+
+
+//##########
+                        Log.d("string", "In der onFailure");
+//##########
+
+
+                        adapter.clear();
+                        adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, todos);
+                        todoList.setAdapter(adapter);
+                    }
+                });
             }
         });
     }
