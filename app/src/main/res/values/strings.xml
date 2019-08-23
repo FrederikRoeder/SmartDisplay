@@ -20,5 +20,6 @@
     <string name="timer_switch">Timer anzeigen</string>
     <string name="temp_switch">Temperatur anzeigen</string>
     <string name="effect_switch">Visuelle Effekte anzeigen</string>
+    <string name="snake">Snake</string>
 
 </resources>

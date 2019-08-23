@@ -77,14 +77,10 @@ public class NotificationListener extends NotificationListenerService {
                     else if(pack.equals(ApplicationPackageNames.MAIL_PACK_NAME) || pack.equals(ApplicationPackageNames.GMAIL_PACK_NAME)) {
                         sendNotification("Mail");
                     }
-                    else if(pack.equals(ApplicationPackageNames.PHONE_PACK_NAME)) {
-
-                        sendNotification("Telefon");
-                    }
                 }
             }
 
-            if(pack.equals(ApplicationPackageNames.PHONE_PACK_NAME) && lock == false) {
+            if(pack.equals(ApplicationPackageNames.PHONE_PACK_NAME) && !lock) {
                 sendNotification("Telefon");
                 setLock();
             }

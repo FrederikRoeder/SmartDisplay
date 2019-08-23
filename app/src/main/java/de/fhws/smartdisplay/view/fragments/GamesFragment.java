@@ -27,7 +27,7 @@ public class GamesFragment extends Fragment {
         ImageButton buttonGameOne = view.findViewById(R.id.imageButtonGame1);
         buttonGameOne.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                //todo: open game 1
+                //todo: open game 1 (Snake)
             }
         });
         ImageButton buttonGameTwo = view.findViewById(R.id.imageButtonGame2);

@@ -136,7 +136,6 @@ public class HomeFragment extends Fragment {
                                 handler.post(new Runnable() {
                                     public void run() {
                                         clockSwitch.setChecked(false);
-                                        Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
                                     }
                                 });
                             }
@@ -148,7 +147,6 @@ public class HomeFragment extends Fragment {
                             handler.post(new Runnable() {
                                 public void run() {
                                     clockSwitch.setChecked(false);
-                                    Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
                                 }
                             });
                         }
@@ -164,7 +162,6 @@ public class HomeFragment extends Fragment {
                                 handler.post(new Runnable() {
                                     public void run() {
                                         clockSwitch.setChecked(false);
-                                        Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
                                     }
                                 });
                             }
@@ -176,7 +173,6 @@ public class HomeFragment extends Fragment {
                             handler.post(new Runnable() {
                                 public void run() {
                                     clockSwitch.setChecked(false);
-                                    Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
                                 }
                             });
                         }
@@ -231,7 +227,6 @@ public class HomeFragment extends Fragment {
                                 handler.post(new Runnable() {
                                     public void run() {
                                         todoSwitch.setChecked(false);
-                                        Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
                                     }
                                 });
                             }
@@ -243,7 +238,6 @@ public class HomeFragment extends Fragment {
                             handler.post(new Runnable() {
                                 public void run() {
                                     todoSwitch.setChecked(false);
-                                    Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
                                 }
                             });
                         }
@@ -259,7 +253,6 @@ public class HomeFragment extends Fragment {
                                 handler.post(new Runnable() {
                                     public void run() {
                                         todoSwitch.setChecked(false);
-                                        Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
                                     }
                                 });
                             }
@@ -271,7 +264,6 @@ public class HomeFragment extends Fragment {
                             handler.post(new Runnable() {
                                 public void run() {
                                     todoSwitch.setChecked(false);
-                                    Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
                                 }
                             });
                         }
@@ -326,7 +318,6 @@ public class HomeFragment extends Fragment {
                                 handler.post(new Runnable() {
                                     public void run() {
                                         timerSwitch.setChecked(false);
-                                        Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
                                     }
                                 });
                             }
@@ -338,7 +329,6 @@ public class HomeFragment extends Fragment {
                             handler.post(new Runnable() {
                                 public void run() {
                                     timerSwitch.setChecked(false);
-                                    Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
                                 }
                             });
                         }
@@ -354,7 +344,6 @@ public class HomeFragment extends Fragment {
                                 handler.post(new Runnable() {
                                     public void run() {
                                         timerSwitch.setChecked(false);
-                                        Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
                                     }
                                 });
                             }
@@ -366,7 +355,6 @@ public class HomeFragment extends Fragment {
                             handler.post(new Runnable() {
                                 public void run() {
                                     timerSwitch.setChecked(false);
-                                    Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
                                 }
                             });
                         }
@@ -421,7 +409,6 @@ public class HomeFragment extends Fragment {
                                 handler.post(new Runnable() {
                                     public void run() {
                                         effectSwitch.setChecked(false);
-                                        Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
                                     }
                                 });
                             }
@@ -433,7 +420,6 @@ public class HomeFragment extends Fragment {
                             handler.post(new Runnable() {
                                 public void run() {
                                     effectSwitch.setChecked(false);
-                                    Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
                                 }
                             });
                         }
@@ -449,7 +435,6 @@ public class HomeFragment extends Fragment {
                                 handler.post(new Runnable() {
                                     public void run() {
                                         effectSwitch.setChecked(false);
-                                        Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
                                     }
                                 });
                             }
@@ -461,7 +446,6 @@ public class HomeFragment extends Fragment {
                             handler.post(new Runnable() {
                                 public void run() {
                                     effectSwitch.setChecked(false);
-                                    Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
                                 }
                             });
                         }

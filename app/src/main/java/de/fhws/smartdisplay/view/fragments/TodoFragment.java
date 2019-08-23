@@ -92,7 +92,15 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
                 serverConnection.deleteTodo(todo).enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
-
+                        if(response.isSuccessful()) {
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    updateTodoList();
+                                    Toast.makeText(getContext(), "ToDo wird gelöscht", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
                     }
 
                     @Override
@@ -100,8 +108,6 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
 
                     }
                 });
-                updateTodoList();
-                Toast.makeText(getContext(), "ToDo wird gelöscht", Toast.LENGTH_LONG).show();
                 return true;
             }
         });
@@ -145,7 +151,6 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
 //##########
 
 
-                        adapter.clear();
                         adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, todos);
                         todoList.setAdapter(adapter);
                     }
@@ -160,11 +165,12 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
 
 
 //##########
+                        String aaa = "1;2;3";
+                        todos = Arrays.asList(aaa.split(";"));
                         Log.d("string", "In der onFailure");
 //##########
 
 
-                        adapter.clear();
                         adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, todos);
                         todoList.setAdapter(adapter);
                     }

@@ -102,7 +102,15 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
                 serverConnection.deleteTimer(timer).enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
-
+                        if(response.isSuccessful()) {
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    updateTimerList();
+                                    Toast.makeText(getContext(), "Timer wird gelöscht", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
                     }
 
                     @Override
@@ -110,8 +118,6 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
 
                     }
                 });
-                updateTimerList();
-                Toast.makeText(getContext(), "Timer wird gelöscht", Toast.LENGTH_LONG).show();
                 return true;
             }
         });
@@ -134,7 +140,6 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
                         if(response.isSuccessful()) {
                             timer = Arrays.asList(response.body().split(";"));
                         }
-                        adapter.clear();
                         adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, timer);
                         timerList.setAdapter(adapter);
                     }
@@ -146,7 +151,6 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
                 Handler handler = new Handler(Looper.getMainLooper());
                 handler.post(new Runnable() {
                     public void run() {
-                        adapter.clear();
                         adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, timer);
                         timerList.setAdapter(adapter);
                     }
@@ -170,7 +174,7 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
             int intTimerH = Integer.parseInt(timerH);
             String timerM = timer.substring(3, 5);
             int intTimerM = Integer.parseInt(timerM);
-            String timerS = timer.substring(6);
+            String timerS = timer.substring(6, 8);
             int intTimerS = Integer.parseInt(timerS);
 
             Calendar calendar = Calendar.getInstance();
