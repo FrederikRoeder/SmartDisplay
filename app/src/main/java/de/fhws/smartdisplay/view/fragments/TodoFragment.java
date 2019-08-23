@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +15,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import com.google.gson.JsonArray;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,11 +32,13 @@ import retrofit2.Response;
 
 public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
 
-    private ArrayAdapter<String> adapter;
     private ServerConnection serverConnection;
+    private ArrayAdapter<String> adapter;
+    private Timer updateTimer;
 
     private ListView todoList;
     private List<String> todos;
+
 
     @Nullable
     @Override
@@ -47,6 +46,9 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
         View view = getLayoutInflater().inflate(R.layout.fragment_todo, container, false);
 
         serverConnection = new ConnectionFactory().buildConnection();
+
+        todos = new ArrayList<>();
+        adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, todos);
 
         setupTodoList(view);
 
@@ -69,17 +71,22 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onStart() {
+        super.onStart();
         updateTodoList();
 
-//        Timer timer = new Timer();
-//        timer.schedule(new UpdateTimer(), 20000, 20000);
+        updateTimer = new Timer();
+        updateTimer.schedule(new UpdateTimer(), 30000, 30000);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        updateTimer.cancel();
     }
 
     private void setupTodoList(View view) {
         todoList = view.findViewById(R.id.todoList);
-
         todoList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -114,9 +121,6 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
             }
         });
 
-        todos = new ArrayList<>();
-
-        adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, todos);
         todoList.setAdapter(adapter);
     }
 

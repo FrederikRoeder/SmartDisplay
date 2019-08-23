@@ -37,8 +37,10 @@ import retrofit2.Response;
 
 public class TimerFragment extends Fragment implements TimerPopup.DialogListener {
 
-    private ArrayAdapter<String> adapter;
     private ServerConnection serverConnection;
+    private ArrayAdapter<String> adapter;
+    private Timer updateTimer;
+    private Timer countdownTimer;
 
     private TextView timeView;
     private ListView timerList;
@@ -51,9 +53,12 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
 
         serverConnection = new ConnectionFactory().buildConnection();
 
-        setupTimerList(view);
+        timer = new ArrayList<>();
+        adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, timer);
 
         timeView = view.findViewById(R.id.textViewTime);
+
+        setupTimerList(view);
 
         FloatingActionButton addTimer = view.findViewById(R.id.floatingActionButtonTimer);
         addTimer.setOnClickListener(new View.OnClickListener() {
@@ -74,20 +79,26 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onStart() {
+        super.onStart();
         updateTimerList();
 
-        Timer timerCountdown = new Timer();
-        timerCountdown.schedule(new CountdownTimer(), 0, 1000);
+        countdownTimer = new Timer();
+        countdownTimer.schedule(new CountdownTimer(), 0, 1000);
 
-//        Timer timerUpdate = new Timer();
-//        timerUpdate.schedule(new UpdateTimer(), 20000, 20000);
+        updateTimer = new Timer();
+        updateTimer.schedule(new UpdateTimer(), 30000, 30000);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        countdownTimer.cancel();
+        updateTimer.cancel();
     }
 
     private void setupTimerList(View view) {
         timerList = view.findViewById(R.id.timerList);
-
         timerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -122,9 +133,6 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
             }
         });
 
-        timer = new ArrayList<>();
-
-        adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, timer);
         timerList.setAdapter(adapter);
     }
 

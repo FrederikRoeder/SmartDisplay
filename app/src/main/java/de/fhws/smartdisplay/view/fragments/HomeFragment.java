@@ -36,6 +36,7 @@ public class HomeFragment extends Fragment {
 
     private SettingsDataSource dataSource;
     private ServerConnection serverConnection;
+    private Timer updateTimer;
 
     private Switch notificationSwitch;
     private Switch clockSwitch;
@@ -69,13 +70,19 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onStart() {
+        super.onStart();
         setNotificationState();
         refreshSwitches();
 
-//        Timer timer = new Timer();
-//        timer.schedule(new UpdateTimer(), 20000, 20000);
+        updateTimer = new Timer();
+        updateTimer.schedule(new UpdateTimer(), 30000, 30000);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        updateTimer.cancel();
     }
 
     private void setupDB() {
