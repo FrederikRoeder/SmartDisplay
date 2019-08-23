@@ -281,7 +281,8 @@ public class HomeFragment extends Fragment {
                     Handler handler = new Handler(Looper.getMainLooper());
                     handler.post(new Runnable() {
                         public void run() {
-                            todoSwitch.setChecked(response.body().equals("1"));                        }
+                            todoSwitch.setChecked(response.body().equals("1"));
+                        }
                     });
                 } else {
                     Handler handler = new Handler(Looper.getMainLooper());
@@ -372,7 +373,8 @@ public class HomeFragment extends Fragment {
                     Handler handler = new Handler(Looper.getMainLooper());
                     handler.post(new Runnable() {
                         public void run() {
-                            timerSwitch.setChecked(response.body().equals("1"));                        }
+                            timerSwitch.setChecked(response.body().equals("1"));
+                        }
                     });
                 } else {
                     Handler handler = new Handler(Looper.getMainLooper());

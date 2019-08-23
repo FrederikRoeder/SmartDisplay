@@ -134,16 +134,24 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
         serverConnection.getTimerList().enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, final Response<String> response) {
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(new Runnable() {
-                    public void run() {
-                        if(response.isSuccessful()) {
+                if(response.isSuccessful()) {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        public void run() {
                             timer = Arrays.asList(response.body().split(";"));
+                            adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, timer);
+                            timerList.setAdapter(adapter);
                         }
-                        adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, timer);
-                        timerList.setAdapter(adapter);
-                    }
-                });
+                    });
+                } else {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        public void run() {
+                            adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, timer);
+                            timerList.setAdapter(adapter);
+                        }
+                    });
+                }
             }
 
             @Override

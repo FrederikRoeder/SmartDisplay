@@ -124,37 +124,24 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
         serverConnection.getTodoList().enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, final Response<String> response) {
-
-
-//##########
-                Log.d("string", "In der onResponse, am Anfang: " + response.body());
-//##########
-
-
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(new Runnable() {
-                    public void run() {
-                        if (response.isSuccessful()) {
-
-
-//##########
-                            Log.d("string", "In der onResponse, kein Fehlercode: " + response.body());
-//##########
-
-
+                if(response.isSuccessful()) {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        public void run() {
                             todos = Arrays.asList(response.body().split(";"));
+                            adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, todos);
+                            todoList.setAdapter(adapter);
                         }
-
-
-//##########
-                        Log.d("string", "In der onResponse, aber Fehlercode");
-//##########
-
-
-                        adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, todos);
-                        todoList.setAdapter(adapter);
-                    }
-                });
+                    });
+                } else {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        public void run() {
+                            adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, todos);
+                            todoList.setAdapter(adapter);
+                        }
+                    });
+                }
             }
 
             @Override
@@ -162,15 +149,6 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
                 Handler handler = new Handler(Looper.getMainLooper());
                 handler.post(new Runnable() {
                     public void run() {
-
-
-//##########
-                        String aaa = "1;2;3";
-                        todos = Arrays.asList(aaa.split(";"));
-                        Log.d("string", "In der onFailure");
-//##########
-
-
                         adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, todos);
                         todoList.setAdapter(adapter);
                     }
