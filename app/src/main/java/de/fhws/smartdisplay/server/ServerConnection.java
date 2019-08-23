@@ -1,5 +1,10 @@
 package de.fhws.smartdisplay.server;
 
+import com.google.gson.JsonArray;
+
+import javax.xml.transform.Result;
+
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
