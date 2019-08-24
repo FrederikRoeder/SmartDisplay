@@ -51,21 +51,8 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
         adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, todos);
 
         setupTodoList(view);
-
-        FloatingActionButton addTodo = view.findViewById(R.id.floatingActionButtonTodo);
-        addTodo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openTodoPopup();
-            }
-        });
-
-        ImageButton refreshButton = view.findViewById(R.id.imageButtonRefreshTodos);
-        refreshButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                updateTodoList();
-            }
-        });
+        setupAddButton(view);
+        setupRefreshButton(view);
 
         return view;
     }
@@ -159,6 +146,25 @@ public class TodoFragment extends Fragment implements TodoPopup.DialogListener {
                         todoList.setAdapter(adapter);
                     }
                 });
+            }
+        });
+    }
+
+    private void setupAddButton(View view) {
+        FloatingActionButton addTodo = view.findViewById(R.id.floatingActionButtonTodo);
+        addTodo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openTodoPopup();
+            }
+        });
+    }
+
+    private void setupRefreshButton(View view) {
+        ImageButton refreshButton = view.findViewById(R.id.imageButtonRefreshTodos);
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                updateTodoList();
             }
         });
     }

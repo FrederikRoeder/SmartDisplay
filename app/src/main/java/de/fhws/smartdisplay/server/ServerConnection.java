@@ -1,13 +1,6 @@
 package de.fhws.smartdisplay.server;
 
-import com.google.gson.JsonArray;
-
-import javax.xml.transform.Result;
-
-import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.http.Body;
-import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -16,9 +9,6 @@ import retrofit2.http.PUT;
 
 
 public interface ServerConnection {
-
-    @GET("retrospect")
-    Call<String> getRetrospect();
 
     @GET("clockState")
     Call<String> getClockState();

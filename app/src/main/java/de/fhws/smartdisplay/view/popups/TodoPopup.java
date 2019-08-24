@@ -10,8 +10,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.io.IOException;
-
 import de.fhws.smartdisplay.R;
 import de.fhws.smartdisplay.server.ConnectionFactory;
 import de.fhws.smartdisplay.server.ServerConnection;
@@ -44,22 +42,8 @@ public class TodoPopup extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         final String inputText = getInputText(textInput);
-                        if(!inputText.isEmpty()) {
-                            if(inputText.contains(";")) {
-                                Toast.makeText(getContext(), "Unerlaubtes Zeichen!", Toast.LENGTH_LONG).show();
-                            } else {
-                                serverConnection.addTodo(inputText).enqueue(new Callback<Void>() {
-                                    @Override
-                                    public void onResponse(Call<Void> call, Response<Void> response) {
-
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<Void> call, Throwable t) {
-
-                                    }
-                                });
-                            }
+                        if(checkInputText(inputText)) {
+                            addTodo(inputText);
                         }
                         DialogListener listener = (DialogListener) getTargetFragment();
                         listener.updateResult();
@@ -75,6 +59,32 @@ public class TodoPopup extends DialogFragment {
 
     private String getInputText(EditText textInput) {
         return textInput.getText().toString();
+    }
+
+    private boolean checkInputText(String inputText) {
+        if(!inputText.isEmpty()) {
+            if(inputText.contains(";")) {
+                Toast.makeText(getContext(), "Unerlaubtes Zeichen!", Toast.LENGTH_LONG).show();
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void addTodo(String todo) {
+        serverConnection.addTodo(todo).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+
+            }
+        });
     }
 
     public interface DialogListener {

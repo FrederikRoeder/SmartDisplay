@@ -58,13 +58,7 @@ public class HomeFragment extends Fragment {
         setupTodoSwitch(view);
         setupTimerSwitch(view);
         setupEffectSwitch(view);
-
-        ImageButton refreshButton = view.findViewById(R.id.imageButtonRefreshHome);
-        refreshButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                refreshSwitches();
-            }
-        });
+        setupRefreshButton(view);
 
         return view;
     }
@@ -132,367 +126,45 @@ public class HomeFragment extends Fragment {
 
     private void setupClockSwitch(View view) {
         clockSwitch = view.findViewById(R.id.homeSwitchClock);
-        clockSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
-                    serverConnection.switchClock("1").enqueue(new Callback<Void>() {
-                        @Override
-                        public void onResponse(Call<Void> call, Response<Void> response) {
-                            if(!response.isSuccessful()) {
-                                Handler handler = new Handler(Looper.getMainLooper());
-                                handler.post(new Runnable() {
-                                    public void run() {
-                                        clockSwitch.setChecked(false);
-                                    }
-                                });
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<Void> call, Throwable t) {
-                            Handler handler = new Handler(Looper.getMainLooper());
-                            handler.post(new Runnable() {
-                                public void run() {
-                                    clockSwitch.setChecked(false);
-                                }
-                            });
-                        }
-                    });
-                }
-
-                if(!isChecked) {
-                    serverConnection.switchClock("0").enqueue(new Callback<Void>() {
-                        @Override
-                        public void onResponse(Call<Void> call, Response<Void> response) {
-                            if(!response.isSuccessful()) {
-                                Handler handler = new Handler(Looper.getMainLooper());
-                                handler.post(new Runnable() {
-                                    public void run() {
-                                        clockSwitch.setChecked(false);
-                                    }
-                                });
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<Void> call, Throwable t) {
-                            Handler handler = new Handler(Looper.getMainLooper());
-                            handler.post(new Runnable() {
-                                public void run() {
-                                    clockSwitch.setChecked(false);
-                                }
-                            });
-                        }
-                    });
-                }
-            }
-        });
+        setSwitchOnCheckedChangeListener(clockSwitch, serverConnection.switchClock("1"), serverConnection.switchClock("0"));
     }
 
     private void setClockState() {
-        serverConnection.getClockState().enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, final Response<String> response) {
-                if(response.isSuccessful()) {
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable() {
-                        public void run() {
-                            clockSwitch.setChecked(response.body().equals("1"));                        }
-                    });
-                } else {
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable() {
-                        public void run() {
-                            clockSwitch.setChecked(false);
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(new Runnable() {
-                    public void run() {
-                        clockSwitch.setChecked(false);
-                    }
-                });
-            }
-        });
+        getStateFromServer(clockSwitch, serverConnection.getClockState());
     }
 
     private void setupTodoSwitch(View view) {
         todoSwitch = view.findViewById(R.id.homeSwitchToDo);
-        todoSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
-                    serverConnection.switchTodo("1").enqueue(new Callback<Void>() {
-                        @Override
-                        public void onResponse(Call<Void> call, Response<Void> response) {
-                            if(!response.isSuccessful()) {
-                                Handler handler = new Handler(Looper.getMainLooper());
-                                handler.post(new Runnable() {
-                                    public void run() {
-                                        todoSwitch.setChecked(false);
-                                    }
-                                });
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<Void> call, Throwable t) {
-                            Handler handler = new Handler(Looper.getMainLooper());
-                            handler.post(new Runnable() {
-                                public void run() {
-                                    todoSwitch.setChecked(false);
-                                }
-                            });
-                        }
-                    });
-                }
-
-                if(!isChecked) {
-                    serverConnection.switchTodo("0").enqueue(new Callback<Void>() {
-                        @Override
-                        public void onResponse(Call<Void> call, Response<Void> response) {
-                            if(!response.isSuccessful()) {
-                                Handler handler = new Handler(Looper.getMainLooper());
-                                handler.post(new Runnable() {
-                                    public void run() {
-                                        todoSwitch.setChecked(false);
-                                    }
-                                });
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<Void> call, Throwable t) {
-                            Handler handler = new Handler(Looper.getMainLooper());
-                            handler.post(new Runnable() {
-                                public void run() {
-                                    todoSwitch.setChecked(false);
-                                }
-                            });
-                        }
-                    });
-                }
-            }
-        });
+        setSwitchOnCheckedChangeListener(todoSwitch, serverConnection.switchTodo("1"), serverConnection.switchTodo("0"));
     }
 
     private void setTodoState() {
-        serverConnection.getTodoState().enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, final Response<String> response) {
-                if(response.isSuccessful()) {
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable() {
-                        public void run() {
-                            todoSwitch.setChecked(response.body().equals("1"));
-                        }
-                    });
-                } else {
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable() {
-                        public void run() {
-                            todoSwitch.setChecked(false);
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(new Runnable() {
-                    public void run() {
-                        todoSwitch.setChecked(false);
-                    }
-                });
-            }
-        });
+        getStateFromServer(todoSwitch, serverConnection.getTodoState());
     }
 
     private void setupTimerSwitch(View view) {
         timerSwitch = view.findViewById(R.id.homeSwitchTimer);
-        timerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
-                    serverConnection.switchTimer("1").enqueue(new Callback<Void>() {
-                        @Override
-                        public void onResponse(Call<Void> call, Response<Void> response) {
-                            if(!response.isSuccessful()) {
-                                Handler handler = new Handler(Looper.getMainLooper());
-                                handler.post(new Runnable() {
-                                    public void run() {
-                                        timerSwitch.setChecked(false);
-                                    }
-                                });
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<Void> call, Throwable t) {
-                            Handler handler = new Handler(Looper.getMainLooper());
-                            handler.post(new Runnable() {
-                                public void run() {
-                                    timerSwitch.setChecked(false);
-                                }
-                            });
-                        }
-                    });
-                }
-
-                if(!isChecked) {
-                    serverConnection.switchTimer("0").enqueue(new Callback<Void>() {
-                        @Override
-                        public void onResponse(Call<Void> call, Response<Void> response) {
-                            if(!response.isSuccessful()) {
-                                Handler handler = new Handler(Looper.getMainLooper());
-                                handler.post(new Runnable() {
-                                    public void run() {
-                                        timerSwitch.setChecked(false);
-                                    }
-                                });
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<Void> call, Throwable t) {
-                            Handler handler = new Handler(Looper.getMainLooper());
-                            handler.post(new Runnable() {
-                                public void run() {
-                                    timerSwitch.setChecked(false);
-                                }
-                            });
-                        }
-                    });
-                }
-            }
-        });
+        setSwitchOnCheckedChangeListener(timerSwitch, serverConnection.switchTimer("1"), serverConnection.switchTimer("0"));
     }
 
     private void setTimerState() {
-        serverConnection.getTimerState().enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, final Response<String> response) {
-                if(response.isSuccessful()) {
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable() {
-                        public void run() {
-                            timerSwitch.setChecked(response.body().equals("1"));
-                        }
-                    });
-                } else {
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable() {
-                        public void run() {
-                            timerSwitch.setChecked(false);
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(new Runnable() {
-                    public void run() {
-                        timerSwitch.setChecked(false);
-                    }
-                });
-            }
-        });
+        getStateFromServer(timerSwitch, serverConnection.getTimerList());
     }
 
     private void setupEffectSwitch(View view) {
         effectSwitch = view.findViewById(R.id.homeSwitchEffect);
-        effectSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
-                    serverConnection.switchEffect("1").enqueue(new Callback<Void>() {
-                        @Override
-                        public void onResponse(Call<Void> call, Response<Void> response) {
-                            if(!response.isSuccessful()) {
-                                Handler handler = new Handler(Looper.getMainLooper());
-                                handler.post(new Runnable() {
-                                    public void run() {
-                                        effectSwitch.setChecked(false);
-                                    }
-                                });
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<Void> call, Throwable t) {
-                            Handler handler = new Handler(Looper.getMainLooper());
-                            handler.post(new Runnable() {
-                                public void run() {
-                                    effectSwitch.setChecked(false);
-                                }
-                            });
-                        }
-                    });
-                }
-
-                if(!isChecked) {
-                    serverConnection.switchEffect("0").enqueue(new Callback<Void>() {
-                        @Override
-                        public void onResponse(Call<Void> call, Response<Void> response) {
-                            if(!response.isSuccessful()) {
-                                Handler handler = new Handler(Looper.getMainLooper());
-                                handler.post(new Runnable() {
-                                    public void run() {
-                                        effectSwitch.setChecked(false);
-                                    }
-                                });
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<Void> call, Throwable t) {
-                            Handler handler = new Handler(Looper.getMainLooper());
-                            handler.post(new Runnable() {
-                                public void run() {
-                                    effectSwitch.setChecked(false);
-                                }
-                            });
-                        }
-                    });
-                }
-            }
-        });
+        setSwitchOnCheckedChangeListener(effectSwitch, serverConnection.switchEffect("1"), serverConnection.switchEffect("0"));
     }
 
     private void setEffectState() {
-        serverConnection.getEffectState().enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, final Response<String> response) {
-                if(response.isSuccessful()) {
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable() {
-                        public void run() {
-                            effectSwitch.setChecked(response.body().equals("1"));
-                        }
-                    });
-                } else {
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable() {
-                        public void run() {
-                            effectSwitch.setChecked(false);
-                        }
-                    });
-                }
-            }
+        getStateFromServer(effectSwitch, serverConnection.getEffectState());
+    }
 
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(new Runnable() {
-                    public void run() {
-                        effectSwitch.setChecked(false);
-                    }
-                });
+    private void setupRefreshButton(View view) {
+        ImageButton refreshButton = view.findViewById(R.id.imageButtonRefreshHome);
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                refreshSwitches();
             }
         });
     }
@@ -502,6 +174,97 @@ public class HomeFragment extends Fragment {
         setTodoState();
         setTimerState();
         setEffectState();
+    }
+
+    private void getStateFromServer(final Switch sw, Call<String> call) {
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, final Response<String> response) {
+                if(response.isSuccessful()) {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        public void run() {
+                            sw.setChecked(response.body().equals("1"));
+                        }
+                    });
+                } else {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        public void run() {
+                            sw.setChecked(false);
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                    public void run() {
+                        sw.setChecked(false);
+                    }
+                });
+            }
+        });
+    }
+
+    private void setSwitchOnCheckedChangeListener(final Switch sw, final Call<Void> callOn, final Call<Void> callOff) {
+        sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    callOn.enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if(!response.isSuccessful()) {
+                                Handler handler = new Handler(Looper.getMainLooper());
+                                handler.post(new Runnable() {
+                                    public void run() {
+                                        sw.setChecked(false);
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    sw.setChecked(false);
+                                }
+                            });
+                        }
+                    });
+                }
+
+                if(!isChecked) {
+                    callOff.enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if(!response.isSuccessful()) {
+                                Handler handler = new Handler(Looper.getMainLooper());
+                                handler.post(new Runnable() {
+                                    public void run() {
+                                        sw.setChecked(false);
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    sw.setChecked(false);
+                                }
+                            });
+                        }
+                    });
+                }
+            }
+        });
     }
 
     private boolean isNotificationServiceEnabled(){

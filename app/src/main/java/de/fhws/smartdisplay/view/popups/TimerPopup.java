@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -54,17 +53,7 @@ public class TimerPopup extends DialogFragment {
                         final String inputSeconds = getInputText(secondsInput);
                         if(checkInputText(inputHours, inputMinutes, inputSeconds)) {
                             final String time = convertTime(inputHours, inputMinutes, inputSeconds);
-                            serverConnection.addTimer(time).enqueue(new Callback<Void>() {
-                                @Override
-                                public void onResponse(Call<Void> call, Response<Void> response) {
-
-                                }
-
-                                @Override
-                                public void onFailure(Call<Void> call, Throwable t) {
-
-                                }
-                            });
+                            addTimer(time);
                         }
                         TimerPopup.DialogListener listener = (TimerPopup.DialogListener) getTargetFragment();
                         listener.updateResult();
@@ -94,6 +83,20 @@ public class TimerPopup extends DialogFragment {
         }
         Toast.makeText(getContext(), "Ungültige Eingabe", Toast.LENGTH_LONG).show();
         return false;
+    }
+
+    private void addTimer(String time) {
+        serverConnection.addTimer(time).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+
+            }
+        });
     }
 
     private String convertTime(String h, String m, String s) {

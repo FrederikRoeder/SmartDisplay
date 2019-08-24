@@ -24,25 +24,37 @@ public class GamesFragment extends Fragment {
 
         serverConnection = new ConnectionFactory().buildConnection();
 
+        setupSnake(view);
+        setupGameTwo(view);
+        setupGameThree(view);
+
+        return view;
+    }
+
+    private void setupSnake(View view) {
         ImageButton buttonGameOne = view.findViewById(R.id.imageButtonGame1);
         buttonGameOne.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 //todo: open game 1 (Snake)
             }
         });
+    }
+
+    private void setupGameTwo(View view) {
         ImageButton buttonGameTwo = view.findViewById(R.id.imageButtonGame2);
         buttonGameTwo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 //todo: open game 2
             }
         });
+    }
+
+    private void setupGameThree(View view) {
         ImageButton buttonGameThree = view.findViewById(R.id.imageButtonGame3);
         buttonGameThree.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 //todo: open game 3
             }
         });
-
-        return view;
     }
 }

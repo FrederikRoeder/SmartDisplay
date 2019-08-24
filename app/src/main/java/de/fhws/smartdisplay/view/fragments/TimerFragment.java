@@ -59,21 +59,8 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
         timeView = view.findViewById(R.id.textViewTime);
 
         setupTimerList(view);
-
-        FloatingActionButton addTimer = view.findViewById(R.id.floatingActionButtonTimer);
-        addTimer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openTimerPopup();
-            }
-        });
-
-        ImageButton refreshButton = view.findViewById(R.id.imageButtonRefreshTimer);
-        refreshButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                updateTimerList();
-            }
-        });
+        setupAddButton(view);
+        setupRefreshButton(view);
 
         return view;
     }
@@ -171,6 +158,25 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
                         timerList.setAdapter(adapter);
                     }
                 });
+            }
+        });
+    }
+
+    private void setupAddButton(View view) {
+        FloatingActionButton addTimer = view.findViewById(R.id.floatingActionButtonTimer);
+        addTimer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openTimerPopup();
+            }
+        });
+    }
+
+    private void setupRefreshButton(View view) {
+        ImageButton refreshButton = view.findViewById(R.id.imageButtonRefreshTimer);
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                updateTimerList();
             }
         });
     }

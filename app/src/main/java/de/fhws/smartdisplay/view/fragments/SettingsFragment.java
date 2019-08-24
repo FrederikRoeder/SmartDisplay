@@ -19,8 +19,6 @@ import java.util.List;
 import de.fhws.smartdisplay.R;
 import de.fhws.smartdisplay.database.SettingsData;
 import de.fhws.smartdisplay.database.SettingsDataSource;
-import de.fhws.smartdisplay.server.ConnectionFactory;
-import de.fhws.smartdisplay.server.ServerConnection;
 
 public class SettingsFragment extends Fragment {
 
@@ -34,16 +32,22 @@ public class SettingsFragment extends Fragment {
         dataSource = new SettingsDataSource(this.getContext());
 
         setupEditTextName(view);
-
-        ImageButton buttonAllowNotifications = view.findViewById(R.id.imageButtonAllowNotifications);
-        buttonAllowNotifications.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
-                startActivity(intent);
-            }
-        });
+        setupButtonAllowNotifications(view);
 
         return view;
+    }
+
+    private void setupDB() {
+        List<SettingsData> settingsList = dataSource.getAll();
+        if(settingsList.isEmpty()) {
+            SettingsData settingsData = new SettingsData();
+            dataSource.create(settingsData);
+        }
+        if(settingsList.size() > 1) {
+            dataSource.deleteAll();
+            SettingsData settingsData = new SettingsData();
+            dataSource.create(settingsData);
+        }
     }
 
     private void setupEditTextName(View view) {
@@ -65,21 +69,18 @@ public class SettingsFragment extends Fragment {
         });
     }
 
+    private void setupButtonAllowNotifications(View view) {
+        ImageButton buttonAllowNotifications = view.findViewById(R.id.imageButtonAllowNotifications);
+        buttonAllowNotifications.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+                startActivity(intent);
+            }
+        });
+    }
+
     private String getName() {
         List<SettingsData> settingsList = dataSource.getAll();
         return settingsList.get(0).getName();
-    }
-
-    private void setupDB() {
-        List<SettingsData> settingsList = dataSource.getAll();
-        if(settingsList.isEmpty()) {
-            SettingsData settingsData = new SettingsData();
-            dataSource.create(settingsData);
-        }
-        if(settingsList.size() > 1) {
-            dataSource.deleteAll();
-            SettingsData settingsData = new SettingsData();
-            dataSource.create(settingsData);
-        }
     }
 }
