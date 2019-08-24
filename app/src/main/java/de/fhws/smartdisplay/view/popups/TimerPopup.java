@@ -122,7 +122,7 @@ public class TimerPopup extends DialogFragment {
         int intTimeH = Integer.parseInt(timeH);
         String timeM = time.substring(3, 5);
         int intTimeM = Integer.parseInt(timeM);
-        String timeS = time.substring(6);
+        String timeS = time.substring(6, 8);
         int intTimeS = Integer.parseInt(timeS);
 
         int tempM = 0;
@@ -138,8 +138,8 @@ public class TimerPopup extends DialogFragment {
             tempH = 1;
         }
         intTimeH += (intTimerH + tempH);
-        if(intTimeM > 23) {
-            intTimeH = intTimeM % 24;
+        if(intTimeH > 23) {
+            intTimeH = intTimeH % 24;
         }
 
         if(intTimeH < 10) {
