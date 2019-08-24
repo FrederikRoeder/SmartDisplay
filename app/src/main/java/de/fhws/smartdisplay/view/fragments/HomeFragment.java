@@ -126,7 +126,17 @@ public class HomeFragment extends Fragment {
 
     private void setupClockSwitch(View view) {
         clockSwitch = view.findViewById(R.id.homeSwitchClock);
-        setSwitchOnCheckedChangeListener(clockSwitch, serverConnection.switchClock("1"), serverConnection.switchClock("0"));
+        clockSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    sendStateToServer(clockSwitch, serverConnection.switchClock("1"));
+                }
+
+                if(!isChecked) {
+                    sendStateToServer(clockSwitch, serverConnection.switchClock("0"));
+                }
+            }
+        });
     }
 
     private void setClockState() {
@@ -135,7 +145,17 @@ public class HomeFragment extends Fragment {
 
     private void setupTodoSwitch(View view) {
         todoSwitch = view.findViewById(R.id.homeSwitchToDo);
-        setSwitchOnCheckedChangeListener(todoSwitch, serverConnection.switchTodo("1"), serverConnection.switchTodo("0"));
+        todoSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    sendStateToServer(todoSwitch, serverConnection.switchTodo("1"));
+                }
+
+                if(!isChecked) {
+                    sendStateToServer(todoSwitch, serverConnection.switchTodo("0"));
+                }
+            }
+        });
     }
 
     private void setTodoState() {
@@ -144,7 +164,17 @@ public class HomeFragment extends Fragment {
 
     private void setupTimerSwitch(View view) {
         timerSwitch = view.findViewById(R.id.homeSwitchTimer);
-        setSwitchOnCheckedChangeListener(timerSwitch, serverConnection.switchTimer("1"), serverConnection.switchTimer("0"));
+        timerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    sendStateToServer(timerSwitch, serverConnection.switchTimer("1"));
+                }
+
+                if(!isChecked) {
+                    sendStateToServer(timerSwitch, serverConnection.switchTimer("0"));
+                }
+            }
+        });
     }
 
     private void setTimerState() {
@@ -153,7 +183,17 @@ public class HomeFragment extends Fragment {
 
     private void setupEffectSwitch(View view) {
         effectSwitch = view.findViewById(R.id.homeSwitchEffect);
-        setSwitchOnCheckedChangeListener(effectSwitch, serverConnection.switchEffect("1"), serverConnection.switchEffect("0"));
+        effectSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    sendStateToServer(effectSwitch, serverConnection.switchEffect("1"));
+                }
+
+                if(!isChecked) {
+                    sendStateToServer(effectSwitch, serverConnection.switchEffect("0"));
+                }
+            }
+        });
     }
 
     private void setEffectState() {
@@ -209,60 +249,28 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void setSwitchOnCheckedChangeListener(final Switch sw, final Call<Void> callOn, final Call<Void> callOff) {
-        sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
-                    callOn.enqueue(new Callback<Void>() {
-                        @Override
-                        public void onResponse(Call<Void> call, Response<Void> response) {
-                            if(!response.isSuccessful()) {
-                                Handler handler = new Handler(Looper.getMainLooper());
-                                handler.post(new Runnable() {
-                                    public void run() {
-                                        sw.setChecked(false);
-                                    }
-                                });
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<Void> call, Throwable t) {
-                            Handler handler = new Handler(Looper.getMainLooper());
-                            handler.post(new Runnable() {
-                                public void run() {
-                                    sw.setChecked(false);
-                                }
-                            });
+    private void sendStateToServer(final Switch sw, final Call<Void> call) {
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if(!response.isSuccessful()) {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        public void run() {
+                            sw.setChecked(false);
                         }
                     });
                 }
+            }
 
-                if(!isChecked) {
-                    callOff.enqueue(new Callback<Void>() {
-                        @Override
-                        public void onResponse(Call<Void> call, Response<Void> response) {
-                            if(!response.isSuccessful()) {
-                                Handler handler = new Handler(Looper.getMainLooper());
-                                handler.post(new Runnable() {
-                                    public void run() {
-                                        sw.setChecked(false);
-                                    }
-                                });
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<Void> call, Throwable t) {
-                            Handler handler = new Handler(Looper.getMainLooper());
-                            handler.post(new Runnable() {
-                                public void run() {
-                                    sw.setChecked(false);
-                                }
-                            });
-                        }
-                    });
-                }
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                    public void run() {
+                        sw.setChecked(false);
+                    }
+                });
             }
         });
     }
