@@ -178,7 +178,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void setTimerState() {
-        getStateFromServer(timerSwitch, serverConnection.getTimerList());
+        getStateFromServer(timerSwitch, serverConnection.getTimerState());
     }
 
     private void setupEffectSwitch(View view) {
