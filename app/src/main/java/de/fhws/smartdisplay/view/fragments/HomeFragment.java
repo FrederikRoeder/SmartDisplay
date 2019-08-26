@@ -43,6 +43,7 @@ public class HomeFragment extends Fragment {
     private Switch todoSwitch;
     private Switch timerSwitch;
     private Switch effectSwitch;
+    private Switch lightingSwitch;
 
     @Nullable
     @Override
@@ -58,6 +59,8 @@ public class HomeFragment extends Fragment {
         setupTodoSwitch(view);
         setupTimerSwitch(view);
         setupEffectSwitch(view);
+        setupLightingSwitch(view);
+        setupColorChangeButton(view);
         setupRefreshButton(view);
 
         return view;
@@ -200,6 +203,45 @@ public class HomeFragment extends Fragment {
         getStateFromServer(effectSwitch, serverConnection.getEffectState());
     }
 
+    private void setupLightingSwitch(View view) {
+        lightingSwitch = view.findViewById(R.id.homeSwitchLighting);
+        lightingSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    sendStateToServer(lightingSwitch, serverConnection.switchLighting("1"));
+                }
+
+                if(!isChecked) {
+                    sendStateToServer(lightingSwitch, serverConnection.switchLighting("0"));
+                }
+            }
+        });
+    }
+
+    private void setLightingState() {
+        getStateFromServer(lightingSwitch, serverConnection.getLightingState());
+    }
+
+    private void setupColorChangeButton(View view) {
+        ImageButton colorChangeButton = view.findViewById(R.id.imageButtonChangeColor);
+        colorChangeButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                serverConnection.switchColor().enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+
+                    }
+                });
+            }
+        });
+    }
+
     private void setupRefreshButton(View view) {
         ImageButton refreshButton = view.findViewById(R.id.imageButtonRefreshHome);
         refreshButton.setOnClickListener(new View.OnClickListener() {
@@ -214,6 +256,7 @@ public class HomeFragment extends Fragment {
         setTodoState();
         setTimerState();
         setEffectState();
+        setLightingState();
     }
 
     private void getStateFromServer(final Switch sw, Call<String> call) {

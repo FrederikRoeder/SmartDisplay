@@ -38,6 +38,16 @@ public interface ServerConnection {
     @FormUrlEncoded
     Call<Void> switchEffect(@Field("switchState") String switchState);
 
+    @GET("lightingState")
+    Call<String> getLightingState();
+
+    @PUT("lightingSwitch")
+    @FormUrlEncoded
+    Call<Void> switchLighting(@Field("switchState") String switchState);
+
+    @PUT("colorSwitch")
+    Call<Void> switchColor();
+
     @GET("todoGet")
     Call<String> getTodoList();
 

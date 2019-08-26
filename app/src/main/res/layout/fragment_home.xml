@@ -105,9 +105,45 @@
                     android:button="@drawable/icon_effect_dark"
                     android:text="@string/effect_switch"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/homeSwitchTimer" />
+
+                <Switch
+                    android:id="@+id/homeSwitchLighting"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:button="@drawable/icon_lighting_dark"
+                    android:text="@string/lighting_switch"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/homeSwitchEffect" />
+
+                <TextView
+                    android:id="@+id/textViewChangeColor"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:drawableStart="@drawable/icon_flare_dark"
+                    android:text="@string/change_color"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toStartOf="@+id/imageButtonChangeColor"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/homeSwitchLighting" />
+
+                <ImageButton
+                    android:id="@+id/imageButtonChangeColor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/icon_flare_green"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/homeSwitchLighting" />
 
             </android.support.constraint.ConstraintLayout>
         </ScrollView>
