@@ -80,7 +80,7 @@
                     android:text="@string/todo_switch"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/homeSwitchClock" />
+                    app:layout_constraintTop_toBottomOf="@+id/homeSwitchTimer" />
 
                 <Switch
                     android:id="@+id/homeSwitchTimer"
@@ -93,7 +93,7 @@
                     android:text="@string/timer_switch"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/homeSwitchToDo" />
+                    app:layout_constraintTop_toBottomOf="@+id/homeSwitchClock" />
 
                 <Switch
                     android:id="@+id/homeSwitchEffect"
@@ -106,7 +106,7 @@
                     android:text="@string/effect_switch"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/homeSwitchTimer" />
+                    app:layout_constraintTop_toBottomOf="@+id/homeSwitchToDo" />
 
                 <Switch
                     android:id="@+id/homeSwitchLighting"
