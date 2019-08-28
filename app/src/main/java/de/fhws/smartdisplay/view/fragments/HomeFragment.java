@@ -292,10 +292,10 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void sendStateToServer(final Switch sw, final Call<Void> call) {
-        call.enqueue(new Callback<Void>() {
+    private void sendStateToServer(final Switch sw, final Call<String> call) {
+        call.enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
+            public void onResponse(Call<String> call, Response<String> response) {
                 if(!response.isSuccessful()) {
                     Handler handler = new Handler(Looper.getMainLooper());
                     handler.post(new Runnable() {
@@ -303,11 +303,17 @@ public class HomeFragment extends Fragment {
                             sw.setChecked(false);
                         }
                     });
+                } else if(response.equals("dbEmpty") && sw == todoSwitch) {
+                    sw.setChecked(false);
+                    Toast.makeText(getContext(), "Keine Todos vorhanden!", Toast.LENGTH_LONG).show();
+                } else if(response.equals("dbEmpty") && sw == timerSwitch) {
+                    sw.setChecked(false);
+                    Toast.makeText(getContext(), "Keine Timer vorhanden!", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
+            public void onFailure(Call<String> call, Throwable t) {
                 Handler handler = new Handler(Looper.getMainLooper());
                 handler.post(new Runnable() {
                     public void run() {
