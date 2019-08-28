@@ -24,5 +24,6 @@
     <string name="lighting_switch">Beleuchtung anschalten</string>
     <string name="change_color">Farbe ändern</string>
     <string name="snake">Snake</string>
+    <string name="title_activity_game">GameActivity</string>
 
 </resources>

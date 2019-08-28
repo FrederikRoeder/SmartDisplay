@@ -1,5 +1,6 @@
 package de.fhws.smartdisplay.view.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,6 +13,7 @@ import android.widget.ImageButton;
 import de.fhws.smartdisplay.R;
 import de.fhws.smartdisplay.server.ConnectionFactory;
 import de.fhws.smartdisplay.server.ServerConnection;
+import de.fhws.smartdisplay.view.activitys.GameOneActivity;;
 
 public class GamesFragment extends Fragment {
 
@@ -35,7 +37,8 @@ public class GamesFragment extends Fragment {
         ImageButton buttonGameOne = view.findViewById(R.id.imageButtonGame1);
         buttonGameOne.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                //todo: open game 1 (Snake)
+                Intent intent = new Intent(getActivity(), GameOneActivity.class);
+                startActivity(intent);
             }
         });
     }
