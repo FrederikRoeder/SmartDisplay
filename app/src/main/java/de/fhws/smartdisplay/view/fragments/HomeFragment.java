@@ -303,10 +303,10 @@ public class HomeFragment extends Fragment {
                             sw.setChecked(false);
                         }
                     });
-                } else if(response.equals("dbEmpty") && sw == todoSwitch) {
+                } else if(response.body().equals("dbEmpty") && sw == todoSwitch) {
                     sw.setChecked(false);
                     Toast.makeText(getContext(), "Keine Todos vorhanden!", Toast.LENGTH_LONG).show();
-                } else if(response.equals("dbEmpty") && sw == timerSwitch) {
+                } else if(response.body().equals("dbEmpty") && sw == timerSwitch) {
                     sw.setChecked(false);
                     Toast.makeText(getContext(), "Keine Timer vorhanden!", Toast.LENGTH_LONG).show();
                 }
