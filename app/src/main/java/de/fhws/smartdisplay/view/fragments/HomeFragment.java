@@ -248,7 +248,17 @@ public class HomeFragment extends Fragment {
         Button easerEggButton = view.findViewById(R.id.buttonEasterEgg);
         easerEggButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                Toast.makeText(getContext(), "Selbstzerstörung aktiviert!", Toast.LENGTH_LONG).show();
+                serverConnection.easteregg().enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+
+                    }
+                });
             }
         });
     }

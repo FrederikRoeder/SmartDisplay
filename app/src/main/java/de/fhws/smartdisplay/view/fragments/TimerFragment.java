@@ -97,7 +97,8 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 String timer = (String) parent.getItemAtPosition(position);
-                serverConnection.deleteTimer(timer).enqueue(new Callback<Void>() {
+                String timerShort = timer.substring(0,8);
+                serverConnection.deleteTimer(timerShort).enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         if(response.isSuccessful()) {
@@ -134,6 +135,11 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
                     handler.post(new Runnable() {
                         public void run() {
                             timer = Arrays.asList(response.body().split(";"));
+                            for(int i = 0; i < timer.size(); i++) {
+                                String expandedTime = timer.get(i);
+                                expandedTime += " Uhr";
+                                timer.set(i, expandedTime);
+                            }
                             adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, timer);
                             timerList.setAdapter(adapter);
                         }

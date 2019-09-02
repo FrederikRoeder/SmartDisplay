@@ -75,4 +75,9 @@ public interface ServerConnection {
     Call<Void> sendNotification(@Field("app") String app,
                                 @Field("user") String user);
 
+    @GET("easteregg")
+    Call<String> easteregg();
+
+    @GET("startSnake")
+    Call<String> startSnake();
 }

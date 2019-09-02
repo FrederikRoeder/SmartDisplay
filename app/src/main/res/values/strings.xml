@@ -23,7 +23,7 @@
     <string name="effect_switch">Visuelle Effekte anzeigen</string>
     <string name="lighting_switch">Beleuchtung anschalten</string>
     <string name="change_color">Farbe ändern</string>
+    <string name="connect">Verbinden</string>
     <string name="snake">Snake</string>
-    <string name="title_activity_game">GameActivity</string>
 
 </resources>
