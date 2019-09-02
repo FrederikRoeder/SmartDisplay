@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.Switch;
@@ -62,6 +63,7 @@ public class HomeFragment extends Fragment {
         setupLightingSwitch(view);
         setupColorChangeButton(view);
         setupRefreshButton(view);
+        setupEsterEggButton(view);
 
         return view;
     }
@@ -238,6 +240,15 @@ public class HomeFragment extends Fragment {
 
                     }
                 });
+            }
+        });
+    }
+
+    private void setupEsterEggButton(View view) {
+        Button easerEggButton = view.findViewById(R.id.buttonEasterEgg);
+        easerEggButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Toast.makeText(getContext(), "Selbstzerstörung aktiviert!", Toast.LENGTH_LONG).show();
             }
         });
     }
