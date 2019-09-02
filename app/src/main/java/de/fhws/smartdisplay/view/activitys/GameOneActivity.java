@@ -1,5 +1,7 @@
 package de.fhws.smartdisplay.view.activitys;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -100,8 +102,13 @@ public class GameOneActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         if(response.isSuccessful()) {
-                            changePoints("0");
-                            gameClient.start();
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    changePoints("0");
+                                    gameClient.start();
+                                }
+                            });
                         }
                     }
 

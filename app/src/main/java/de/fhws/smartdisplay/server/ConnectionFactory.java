@@ -24,7 +24,6 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class ConnectionFactory {
     public ServerConnection buildConnection() {
-
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();

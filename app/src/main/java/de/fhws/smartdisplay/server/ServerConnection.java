@@ -80,4 +80,7 @@ public interface ServerConnection {
 
     @GET("startSnake")
     Call<String> startSnake();
+
+    @GET("startPong")
+    Call<String> startPong();
 }
