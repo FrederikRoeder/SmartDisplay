@@ -59,7 +59,7 @@ public class GameClient extends Thread {
 //            String hostAddress = InetAddress.getByName("GAMERZ").getHostAddress();
 //            Log.d(TAG, "run: host:" + hostAddress);
             channel = SocketChannel.open();
-            channel.socket().connect(new InetSocketAddress("192.168.1.124", 10000), 5000);
+            channel.socket().connect(new InetSocketAddress("10.31.16.198", 10000), 5000);
             channel.configureBlocking(false);
             selector = Selector.open();
             channel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);

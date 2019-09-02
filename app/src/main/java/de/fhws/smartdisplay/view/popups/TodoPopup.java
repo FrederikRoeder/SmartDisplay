@@ -82,7 +82,7 @@ public class TodoPopup extends DialogFragment {
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-
+                Toast.makeText(getContext(), "Keine Verbindung!", Toast.LENGTH_LONG).show();
             }
         });
     }

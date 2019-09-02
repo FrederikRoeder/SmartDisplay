@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
+import android.util.Log;
 
 import java.util.List;
 
@@ -54,6 +55,10 @@ public class NotificationListener extends NotificationListenerService {
                 }
                 if(extras.containsKey("android.text") && extras.getCharSequence("android.text") != null) {
                     text = extras.getCharSequence("android.text").toString();
+
+
+                    Log.d("string", "Notification: " + pack);
+
 
                     if(pack.equals(ApplicationPackageNames.SMS_PACK_NAME)) {
                         sendNotification("Sms");
