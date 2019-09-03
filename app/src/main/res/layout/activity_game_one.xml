@@ -9,7 +9,7 @@
 
     <ImageView
         android:id="@+id/imageViewSnakeBackground"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="@dimen/pic_size"
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"

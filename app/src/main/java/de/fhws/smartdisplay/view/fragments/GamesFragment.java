@@ -13,7 +13,8 @@ import android.widget.ImageButton;
 import de.fhws.smartdisplay.R;
 import de.fhws.smartdisplay.server.ConnectionFactory;
 import de.fhws.smartdisplay.server.ServerConnection;
-import de.fhws.smartdisplay.view.activitys.GameOneActivity;;
+import de.fhws.smartdisplay.view.activitys.GameOneActivity;
+import de.fhws.smartdisplay.view.activitys.GameTwoActivity;;
 
 public class GamesFragment extends Fragment {
 
@@ -27,7 +28,7 @@ public class GamesFragment extends Fragment {
         serverConnection = new ConnectionFactory().buildConnection();
 
         setupSnake(view);
-        setupGameTwo(view);
+        setupPong(view);
         setupGameThree(view);
 
         return view;
@@ -43,11 +44,12 @@ public class GamesFragment extends Fragment {
         });
     }
 
-    private void setupGameTwo(View view) {
+    private void setupPong(View view) {
         ImageButton buttonGameTwo = view.findViewById(R.id.imageButtonGame2);
         buttonGameTwo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                //todo: open game 2
+                Intent intent = new Intent(getActivity(), GameTwoActivity.class);
+                startActivity(intent);
             }
         });
     }

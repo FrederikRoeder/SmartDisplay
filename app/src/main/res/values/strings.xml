@@ -25,5 +25,6 @@
     <string name="change_color">Farbe ändern</string>
     <string name="connect">Verbinden</string>
     <string name="snake">Snake</string>
+    <string name="pong">Pong</string>
 
 </resources>

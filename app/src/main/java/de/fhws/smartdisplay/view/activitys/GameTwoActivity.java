@@ -23,11 +23,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class GameOneActivity extends AppCompatActivity {
+public class GameTwoActivity extends AppCompatActivity {
 
     private ServerConnection serverConnection;
 
-    private static final String TAG = "GameOneActivity";
+    private static final String TAG = "GameTwoActivity";
     private GameClient gameClient;
 
     private TextView textViewPoints;
@@ -37,7 +37,7 @@ public class GameOneActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_game_one);
+        setContentView(R.layout.activity_game_two);
 
         serverConnection = new ConnectionFactory().buildConnection();
 
@@ -46,8 +46,6 @@ public class GameOneActivity extends AppCompatActivity {
         setupCloseButton();
         setupUpButton();
         setupDownButton();
-        setupLeftButton();
-        setupRightButton();
     }
 
     @Override
@@ -89,16 +87,16 @@ public class GameOneActivity extends AppCompatActivity {
     }
 
     private void setupTextViewPoints() {
-        textViewPoints = findViewById(R.id.textViewPointsSnake);
+        textViewPoints = findViewById(R.id.textViewPointsPong);
         changePoints("0");
     }
 
     private void setupConnectButton() {
-        connectButton = findViewById(R.id.buttonConnectSnake);
+        connectButton = findViewById(R.id.buttonConnectPong);
         connectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                serverConnection.startSnake().enqueue(new Callback<String>() {
+                serverConnection.startPong().enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         if(response.isSuccessful()) {
@@ -122,7 +120,7 @@ public class GameOneActivity extends AppCompatActivity {
     }
 
     private void setupCloseButton() {
-        closeButton = findViewById(R.id.imageButtonCloseSnake);
+        closeButton = findViewById(R.id.imageButtonClosePong);
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -133,7 +131,7 @@ public class GameOneActivity extends AppCompatActivity {
     }
 
     private void setupUpButton() {
-        ImageButton upButton = findViewById(R.id.imageButtonUpSnake);
+        ImageButton upButton = findViewById(R.id.imageButtonUpPong);
         upButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -143,31 +141,11 @@ public class GameOneActivity extends AppCompatActivity {
     }
 
     private void setupDownButton() {
-        ImageButton downButton = findViewById(R.id.imageButtonDownSnake);
+        ImageButton downButton = findViewById(R.id.imageButtonDownPong);
         downButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 gameClient.send(ClientCmd.DOWN);
-            }
-        });
-    }
-
-    private void setupLeftButton() {
-        ImageButton leftButton = findViewById(R.id.imageButtonLeftSnake);
-        leftButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gameClient.send(ClientCmd.LEFT);
-            }
-        });
-    }
-
-    private void setupRightButton() {
-        ImageButton rightButton = findViewById(R.id.imageButtonRightSnake);
-        rightButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gameClient.send(ClientCmd.RIGHT);
             }
         });
     }
