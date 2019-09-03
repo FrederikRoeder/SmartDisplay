@@ -1,15 +1,12 @@
 package de.fhws.smartdisplay.services;
 
 import android.app.Notification;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
 
-import java.util.List;
-
-import de.fhws.smartdisplay.database.SettingsData;
-import de.fhws.smartdisplay.database.SettingsDataSource;
 import de.fhws.smartdisplay.server.ConnectionFactory;
 import de.fhws.smartdisplay.server.ServerConnection;
 import retrofit2.Call;
@@ -18,7 +15,7 @@ import retrofit2.Response;
 
 public class NotificationListener extends NotificationListenerService {
 
-    private SettingsDataSource dataSource;
+    private SharedPreferences settings;
     private ServerConnection serverConnection;
 
     private boolean lock;
@@ -27,17 +24,15 @@ public class NotificationListener extends NotificationListenerService {
     public void onCreate() {
         super.onCreate();
 
-        dataSource = new SettingsDataSource(this);
+        settings = getSharedPreferences("Settings", 0);
         serverConnection = new ConnectionFactory().buildConnection();
 
         lock = false;
-
-        setupDB();
     }
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
-        if(getNotificationState()) {
+        if(settings.getBoolean("NotificationState", false)) {
 
             if ((sbn.getNotification().flags & Notification.FLAG_GROUP_SUMMARY) != 0) {
                 return;
@@ -97,7 +92,7 @@ public class NotificationListener extends NotificationListenerService {
     }
 
     private void sendNotification(String app) {
-        serverConnection.sendNotification(app, getNameFromSettings()).enqueue(new Callback<Void>() {
+        serverConnection.sendNotification(app, settings.getString("Name", "")).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
 
@@ -108,16 +103,6 @@ public class NotificationListener extends NotificationListenerService {
 
             }
         });
-    }
-
-    private String getNameFromSettings() {
-        List<SettingsData> settingsList = dataSource.getAll();
-        return settingsList.get(0).getName();
-    }
-
-    private boolean getNotificationState() {
-        List<SettingsData> settingsList = dataSource.getAll();
-        return settingsList.get(0).isNotificationEnabled();
     }
 
     private void setLock() {
@@ -131,19 +116,6 @@ public class NotificationListener extends NotificationListenerService {
                 },
                 30000
         );
-    }
-
-    private void setupDB() {
-        List<SettingsData> settingsList = dataSource.getAll();
-        if(settingsList.isEmpty()) {
-            SettingsData settingsData = new SettingsData();
-            dataSource.create(settingsData);
-        }
-        if(settingsList.size() > 1) {
-            dataSource.deleteAll();
-            SettingsData settingsData = new SettingsData();
-            dataSource.create(settingsData);
-        }
     }
 
     private static final class ApplicationPackageNames {

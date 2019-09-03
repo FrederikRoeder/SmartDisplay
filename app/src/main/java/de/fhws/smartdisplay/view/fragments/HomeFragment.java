@@ -1,6 +1,7 @@
 package de.fhws.smartdisplay.view.fragments;
 
 import android.content.ComponentName;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -18,13 +19,10 @@ import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import de.fhws.smartdisplay.R;
-import de.fhws.smartdisplay.database.SettingsData;
-import de.fhws.smartdisplay.database.SettingsDataSource;
 import de.fhws.smartdisplay.server.ConnectionFactory;
 import de.fhws.smartdisplay.server.ServerConnection;
 import retrofit2.Call;
@@ -35,7 +33,8 @@ public class HomeFragment extends Fragment {
 
     private static final String ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
 
-    private SettingsDataSource dataSource;
+    private SharedPreferences settings;
+    private SharedPreferences.Editor editor;
     private ServerConnection serverConnection;
     private Timer updateTimer;
 
@@ -51,10 +50,10 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = getLayoutInflater().inflate(R.layout.fragment_home, container, false);
 
-        dataSource = new SettingsDataSource(this.getContext());
+        settings = this.getActivity().getSharedPreferences("Settings", 0);
+        editor = settings.edit();
         serverConnection = new ConnectionFactory().buildConnection();
 
-        setupDB();
         setupNotificationSwitch(view);
         setupClockSwitch(view);
         setupTodoSwitch(view);
@@ -84,19 +83,6 @@ public class HomeFragment extends Fragment {
         updateTimer.cancel();
     }
 
-    private void setupDB() {
-        List<SettingsData> settingsList = dataSource.getAll();
-        if(settingsList.isEmpty()) {
-            SettingsData settingsData = new SettingsData();
-            dataSource.create(settingsData);
-        }
-        if(settingsList.size() > 1) {
-            dataSource.deleteAll();
-            SettingsData settingsData = new SettingsData();
-            dataSource.create(settingsData);
-        }
-    }
-
     private void setupNotificationSwitch(View view) {
         notificationSwitch = view.findViewById(R.id.homeSwitchNotification);
         notificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -104,19 +90,18 @@ public class HomeFragment extends Fragment {
                 if(!isNotificationServiceEnabled()) {
                     notificationSwitch.setChecked(false);
                     Toast.makeText(getContext(), "Zugriff auf Notifications in Einstellungen erlauben!", Toast.LENGTH_LONG).show();
-                    SettingsData settingsData = dataSource.getAll().get(0);
-                    settingsData.setNotificationEnabled(false);
-                    dataSource.update(settingsData);
-                }
-                if(isChecked) {
-                    SettingsData settingsData = dataSource.getAll().get(0);
-                    settingsData.setNotificationEnabled(true);
-                    dataSource.update(settingsData);
-                }
-                if(!isChecked) {
-                    SettingsData settingsData = dataSource.getAll().get(0);
-                    settingsData.setNotificationEnabled(false);
-                    dataSource.update(settingsData);
+                    editor.putBoolean("NotificationState", false);
+                    editor.commit();
+                } else {
+                    if(isChecked) {
+                        editor.putBoolean("NotificationState", true);
+                        editor.commit();
+                    }
+
+                    if(!isChecked) {
+                        editor.putBoolean("NotificationState", false);
+                        editor.commit();
+                    }
                 }
             }
         });
@@ -124,8 +109,7 @@ public class HomeFragment extends Fragment {
 
     private void setNotificationState() {
         if(isNotificationServiceEnabled()) {
-            List<SettingsData> settingsList = dataSource.getAll();
-            notificationSwitch.setChecked(settingsList.get(0).isNotificationEnabled());
+            notificationSwitch.setChecked(settings.getBoolean("NotificationState", false));
         }
     }
 

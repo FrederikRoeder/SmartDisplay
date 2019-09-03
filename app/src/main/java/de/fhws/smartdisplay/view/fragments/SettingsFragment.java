@@ -1,6 +1,7 @@
 package de.fhws.smartdisplay.view.fragments;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,22 +15,20 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import java.util.List;
-
 import de.fhws.smartdisplay.R;
-import de.fhws.smartdisplay.database.SettingsData;
-import de.fhws.smartdisplay.database.SettingsDataSource;
 
 public class SettingsFragment extends Fragment {
 
-    SettingsDataSource dataSource;
+    SharedPreferences settings;
+    SharedPreferences.Editor editor;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = getLayoutInflater().inflate(R.layout.fragment_settings, container, false);
 
-        dataSource = new SettingsDataSource(this.getContext());
+        settings = this.getActivity().getSharedPreferences("Settings", 0);
+        editor = settings.edit();
 
         setupEditTextName(view);
         setupButtonAllowNotifications(view);
@@ -37,32 +36,16 @@ public class SettingsFragment extends Fragment {
         return view;
     }
 
-    private void setupDB() {
-        List<SettingsData> settingsList = dataSource.getAll();
-        if(settingsList.isEmpty()) {
-            SettingsData settingsData = new SettingsData();
-            dataSource.create(settingsData);
-        }
-        if(settingsList.size() > 1) {
-            dataSource.deleteAll();
-            SettingsData settingsData = new SettingsData();
-            dataSource.create(settingsData);
-        }
-    }
-
     private void setupEditTextName(View view) {
         final EditText editTextName = view.findViewById(R.id.editTextName);
 
-        setupDB();
-
-        editTextName.setText(getName());
+        editTextName.setText(settings.getString("Name", ""));
 
         editTextName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
-                    SettingsData settingsData = dataSource.getAll().get(0);
-                    settingsData.setName(editTextName.getText().toString());
-                    dataSource.update(settingsData);
+                    editor.putString("Name", editTextName.getText().toString());
+                    editor.commit();
                 }
                 return false;
             }
@@ -77,10 +60,5 @@ public class SettingsFragment extends Fragment {
                 startActivity(intent);
             }
         });
-    }
-
-    private String getName() {
-        List<SettingsData> settingsList = dataSource.getAll();
-        return settingsList.get(0).getName();
     }
 }

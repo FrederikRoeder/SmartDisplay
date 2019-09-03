@@ -1,6 +1,7 @@
 package de.fhws.smartdisplay.view.fragments;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,25 +12,23 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import de.fhws.smartdisplay.R;
-import de.fhws.smartdisplay.server.ConnectionFactory;
-import de.fhws.smartdisplay.server.ServerConnection;
 import de.fhws.smartdisplay.view.activitys.GameOneActivity;
 import de.fhws.smartdisplay.view.activitys.GameTwoActivity;;
 
 public class GamesFragment extends Fragment {
 
-    private ServerConnection serverConnection;
+    SharedPreferences settings;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = getLayoutInflater().inflate(R.layout.fragment_games, container, false);
 
-        serverConnection = new ConnectionFactory().buildConnection();
+        settings = this.getActivity().getSharedPreferences("Settings", 0);
 
         setupSnake(view);
         setupPong(view);
-        setupGameThree(view);
+        setupTetris(view);
 
         return view;
     }
@@ -54,7 +53,7 @@ public class GamesFragment extends Fragment {
         });
     }
 
-    private void setupGameThree(View view) {
+    private void setupTetris(View view) {
         ImageButton buttonGameThree = view.findViewById(R.id.imageButtonGame3);
         buttonGameThree.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
