@@ -48,8 +48,81 @@ public class GameTwoActivity extends AppCompatActivity {
         setupDownButton();
     }
 
-    @Override
-    protected void onStart() {
+    private void setupTextViewPoints() {
+        textViewPoints = findViewById(R.id.textViewPointsPong);
+        changePoints("0");
+    }
+
+    private void setupConnectButton() {
+        connectButton = findViewById(R.id.buttonConnectPong);
+        connectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                serverConnection.startPong().enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        if(response.isSuccessful()) {
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    if(gameClient != null) {
+                                        gameClient.exit();
+                                    }
+                                    changePoints("0");
+                                    createGameClient();
+                                    gameClient.start();
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+
+                    }
+                });
+            }
+        });
+    }
+
+    private void setupCloseButton() {
+        closeButton = findViewById(R.id.imageButtonClosePong);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(gameClient != null) {
+                    gameClient.exit();
+                }
+                finish();
+            }
+        });
+    }
+
+    private void setupUpButton() {
+        ImageButton upButton = findViewById(R.id.imageButtonUpPong);
+        upButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(gameClient != null) {
+                    gameClient.send(ClientCmd.UP);
+                }
+            }
+        });
+    }
+
+    private void setupDownButton() {
+        ImageButton downButton = findViewById(R.id.imageButtonDownPong);
+        downButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(gameClient != null) {
+                    gameClient.send(ClientCmd.DOWN);
+                }
+            }
+        });
+    }
+
+    private void createGameClient() {
         gameClient = new GameClient(new GameClient.GameClientCallback() {
             @Override
             public void command(Queue<ServerCmd> queue) {
@@ -81,71 +154,6 @@ public class GameTwoActivity extends AppCompatActivity {
                         }
                     }
                 });
-            }
-        });
-        super.onStart();
-    }
-
-    private void setupTextViewPoints() {
-        textViewPoints = findViewById(R.id.textViewPointsPong);
-        changePoints("0");
-    }
-
-    private void setupConnectButton() {
-        connectButton = findViewById(R.id.buttonConnectPong);
-        connectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                serverConnection.startPong().enqueue(new Callback<String>() {
-                    @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
-                        if(response.isSuccessful()) {
-                            Handler handler = new Handler(Looper.getMainLooper());
-                            handler.post(new Runnable() {
-                                public void run() {
-                                    changePoints("0");
-                                    gameClient.start();
-                                }
-                            });
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<String> call, Throwable t) {
-
-                    }
-                });
-            }
-        });
-    }
-
-    private void setupCloseButton() {
-        closeButton = findViewById(R.id.imageButtonClosePong);
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gameClient.exit();
-                finish();
-            }
-        });
-    }
-
-    private void setupUpButton() {
-        ImageButton upButton = findViewById(R.id.imageButtonUpPong);
-        upButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gameClient.send(ClientCmd.UP);
-            }
-        });
-    }
-
-    private void setupDownButton() {
-        ImageButton downButton = findViewById(R.id.imageButtonDownPong);
-        downButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gameClient.send(ClientCmd.DOWN);
             }
         });
     }

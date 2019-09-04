@@ -50,8 +50,105 @@ public class GameOneActivity extends AppCompatActivity {
         setupRightButton();
     }
 
-    @Override
-    protected void onStart() {
+    private void setupTextViewPoints() {
+        textViewPoints = findViewById(R.id.textViewPointsSnake);
+        changePoints("0");
+    }
+
+    private void setupConnectButton() {
+        connectButton = findViewById(R.id.buttonConnectSnake);
+        connectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                serverConnection.startSnake().enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        if(response.isSuccessful()) {
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    if(gameClient != null) {
+                                        gameClient.exit();
+                                    }
+                                    changePoints("0");
+                                    createGameClient();
+                                    gameClient.start();
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+
+                    }
+                });
+            }
+        });
+    }
+
+    private void setupCloseButton() {
+        closeButton = findViewById(R.id.imageButtonCloseSnake);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(gameClient != null) {
+                    gameClient.exit();
+                }
+                finish();
+            }
+        });
+    }
+
+    private void setupUpButton() {
+        ImageButton upButton = findViewById(R.id.imageButtonUpSnake);
+        upButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(gameClient != null) {
+                    gameClient.send(ClientCmd.UP);
+                }
+            }
+        });
+    }
+
+    private void setupDownButton() {
+        ImageButton downButton = findViewById(R.id.imageButtonDownSnake);
+        downButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(gameClient != null) {
+                    gameClient.send(ClientCmd.DOWN);
+                }
+            }
+        });
+    }
+
+    private void setupLeftButton() {
+        ImageButton leftButton = findViewById(R.id.imageButtonLeftSnake);
+        leftButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(gameClient != null) {
+                    gameClient.send(ClientCmd.LEFT);
+                }
+            }
+        });
+    }
+
+    private void setupRightButton() {
+        ImageButton rightButton = findViewById(R.id.imageButtonRightSnake);
+        rightButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(gameClient != null) {
+                    gameClient.send(ClientCmd.RIGHT);
+                }
+            }
+        });
+    }
+
+    private void createGameClient() {
         gameClient = new GameClient(new GameClient.GameClientCallback() {
             @Override
             public void command(Queue<ServerCmd> queue) {
@@ -83,91 +180,6 @@ public class GameOneActivity extends AppCompatActivity {
                         }
                     }
                 });
-            }
-        });
-        super.onStart();
-    }
-
-    private void setupTextViewPoints() {
-        textViewPoints = findViewById(R.id.textViewPointsSnake);
-        changePoints("0");
-    }
-
-    private void setupConnectButton() {
-        connectButton = findViewById(R.id.buttonConnectSnake);
-        connectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                serverConnection.startSnake().enqueue(new Callback<String>() {
-                    @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
-                        if(response.isSuccessful()) {
-                            Handler handler = new Handler(Looper.getMainLooper());
-                            handler.post(new Runnable() {
-                                public void run() {
-                                    changePoints("0");
-                                    gameClient.start();
-                                }
-                            });
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<String> call, Throwable t) {
-
-                    }
-                });
-            }
-        });
-    }
-
-    private void setupCloseButton() {
-        closeButton = findViewById(R.id.imageButtonCloseSnake);
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gameClient.exit();
-                finish();
-            }
-        });
-    }
-
-    private void setupUpButton() {
-        ImageButton upButton = findViewById(R.id.imageButtonUpSnake);
-        upButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gameClient.send(ClientCmd.UP);
-            }
-        });
-    }
-
-    private void setupDownButton() {
-        ImageButton downButton = findViewById(R.id.imageButtonDownSnake);
-        downButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gameClient.send(ClientCmd.DOWN);
-            }
-        });
-    }
-
-    private void setupLeftButton() {
-        ImageButton leftButton = findViewById(R.id.imageButtonLeftSnake);
-        leftButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gameClient.send(ClientCmd.LEFT);
-            }
-        });
-    }
-
-    private void setupRightButton() {
-        ImageButton rightButton = findViewById(R.id.imageButtonRightSnake);
-        rightButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gameClient.send(ClientCmd.RIGHT);
             }
         });
     }
