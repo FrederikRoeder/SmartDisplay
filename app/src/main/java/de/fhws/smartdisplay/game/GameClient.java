@@ -15,6 +15,8 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import de.fhws.smartdisplay.server.ServerConfig;
+
 import static de.fhws.smartdisplay.game.ServerCmdType.CONNECTION_FAILED;
 import static de.fhws.smartdisplay.game.ServerCmdType.EXIT;
 import static de.fhws.smartdisplay.game.ServerCmdType.SEND_ID;
@@ -59,7 +61,7 @@ public class GameClient extends Thread {
 //            String hostAddress = InetAddress.getByName("GAMERZ").getHostAddress();
 //            Log.d(TAG, "run: host:" + hostAddress);
             channel = SocketChannel.open();
-            channel.socket().connect(new InetSocketAddress("192.168.43.251", 10000), 5000);
+            channel.socket().connect(new InetSocketAddress(ServerConfig.IP_GAMESERVER, ServerConfig.PORT_GAMESERVER), 10000);
             channel.configureBlocking(false);
             selector = Selector.open();
             channel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);

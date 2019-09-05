@@ -33,6 +33,7 @@ public class GameOneActivity extends AppCompatActivity {
     private TextView textViewPoints;
     private Button connectButton;
     private ImageButton closeButton;
+    private String playerId = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +81,7 @@ public class GameOneActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
-
+                        Log.e(TAG, "onFailure: ", t);
                     }
                 });
             }
@@ -168,10 +169,17 @@ public class GameOneActivity extends AppCompatActivity {
                                 String deadId = cmd.getArg(0);
                                 Toast.makeText(getApplicationContext(), "PLAYER_ID_DEAD: " + deadId, Toast.LENGTH_SHORT).show();
                                 break;
-                            case SEND_ID:
+                            case PLAYER_ID_POINT:
                                 String id = cmd.getArg(0);
+                                if (id.equals(playerId)) {
+                                    String points = cmd.getArg(1);
+                                    changePoints(points);
+                                }
+                                break;
+                            case SEND_ID:
+                                playerId = cmd.getArg(0);
                                 connectButton.setVisibility(View.GONE);
-                                Toast.makeText(getApplicationContext(), "your id: " + id, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "your id: " + playerId, Toast.LENGTH_SHORT).show();
                                 break;
                             case SERVER_CONNECTION_LOST:
                                 connectButton.setVisibility(View.VISIBLE);
