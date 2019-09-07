@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Queue;
+import java.util.concurrent.TimeUnit;
 
 import de.fhws.smartdisplay.R;
 import de.fhws.smartdisplay.game.ClientCmd;
@@ -73,7 +74,6 @@ public class GameOneActivity extends AppCompatActivity {
                                     }
                                     changePoints("0");
                                     createGameClient();
-                                    gameClient.start();
                                 }
                             });
                         }
@@ -190,6 +190,12 @@ public class GameOneActivity extends AppCompatActivity {
                 });
             }
         });
+        try {
+            TimeUnit.SECONDS.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        gameClient.start();
     }
 
     private void changePoints(String pionts) {
