@@ -43,16 +43,26 @@ public class NotificationListener extends NotificationListenerService {
             String text = "";
 
             pack = sbn.getPackageName();
+
+
+            Log.d("string", "Notification vor der if: " + pack);
+
+
             Bundle extras = sbn.getNotification().extras;
             if(!extras.isEmpty()) {
                 if(extras.containsKey("android.title") && extras.getString("android.title") != null) {
                     title = extras.getString("android.title");
                 }
+
+
+                Log.d("string", "Notification in der 1. if: " + pack);
+
+
                 if(extras.containsKey("android.text") && extras.getCharSequence("android.text") != null) {
                     text = extras.getCharSequence("android.text").toString();
 
 
-                    Log.d("string", "Notification: " + pack);
+                    Log.d("string", "Notification in der 2. if: " + pack);
 
 
                     if(pack.equals(ApplicationPackageNames.SMS_PACK_NAME)) {
