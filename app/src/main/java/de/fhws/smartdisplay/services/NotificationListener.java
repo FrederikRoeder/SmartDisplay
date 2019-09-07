@@ -75,7 +75,8 @@ public class NotificationListener extends NotificationListenerService {
                     else if(pack.equals(ApplicationPackageNames.S_MAIL_PACK_NAME) || pack.equals(ApplicationPackageNames.G_MAIL_PACK_NAME)) {
                         sendNotification("Mail");
                     }
-                    else if(pack.equals(ApplicationPackageNames.G_SMS_PACK_NAME) || pack.equals(ApplicationPackageNames.S_SMS_PACK_NAME ) || pack.equals(smsPckName)) {
+                    else if(//pack.equals(ApplicationPackageNames.G_SMS_PACK_NAME) || pack.equals(ApplicationPackageNames.S_SMS_PACK_NAME ) ||
+                            pack.equals(smsPckName)) {
                         sendNotification("Sms");
                     }
 //                    else if((pack.equals(ApplicationPackageNames.G_PHONE_PACK_NAME) || pack.equals(ApplicationPackageNames.S_PHONE_PACK_NAME)) && !lock) {
@@ -134,10 +135,10 @@ public class NotificationListener extends NotificationListenerService {
         public static final String G_MAIL_PACK_NAME = "com.google.android.gm";
         public static final String S_MAIL_PACK_NAME = "com.samsung.android.email.provider";
 
-        public static final String G_SMS_PACK_NAME = "com.google.android.apps.messaging";
-        public static final String S_SMS_PACK_NAME = "com.samsung.android.messaging";
-
-        public static final String G_PHONE_PACK_NAME = "com.google.android.dialer";
-        public static final String S_PHONE_PACK_NAME = "com.samsung.android.incallui";
+//        public static final String G_SMS_PACK_NAME = "com.google.android.apps.messaging";
+//        public static final String S_SMS_PACK_NAME = "com.samsung.android.messaging";
+//
+//        public static final String G_PHONE_PACK_NAME = "com.google.android.dialer";
+//        public static final String S_PHONE_PACK_NAME = "com.samsung.android.incallui";
     }
 }
