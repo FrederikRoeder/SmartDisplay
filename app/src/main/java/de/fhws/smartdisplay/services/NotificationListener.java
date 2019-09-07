@@ -3,6 +3,7 @@ package de.fhws.smartdisplay.services;
 import android.app.Notification;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.provider.Telephony;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
@@ -18,7 +19,8 @@ public class NotificationListener extends NotificationListenerService {
     private SharedPreferences settings;
     private ServerConnection serverConnection;
 
-    private boolean lock;
+    private String smsPckName = "";
+    private boolean lock = false;
 
     @Override
     public void onCreate() {
@@ -27,7 +29,7 @@ public class NotificationListener extends NotificationListenerService {
         settings = getSharedPreferences("Settings", 0);
         serverConnection = new ConnectionFactory().buildConnection();
 
-        lock = false;
+        setSmsPackName();
     }
 
     @Override
@@ -43,32 +45,19 @@ public class NotificationListener extends NotificationListenerService {
             String text = "";
 
             pack = sbn.getPackageName();
-
-
-            Log.d("string", "Notification vor der if: " + pack);
-
-
             Bundle extras = sbn.getNotification().extras;
             if(!extras.isEmpty()) {
                 if(extras.containsKey("android.title") && extras.getString("android.title") != null) {
                     title = extras.getString("android.title");
                 }
-
-
-                Log.d("string", "Notification in der 1. if: " + pack);
-
-
                 if(extras.containsKey("android.text") && extras.getCharSequence("android.text") != null) {
                     text = extras.getCharSequence("android.text").toString();
 
 
-                    Log.d("string", "Notification in der 2. if: " + pack);
+                    Log.d("pack", "PackageName: " + pack);
 
 
-                    if(pack.equals(ApplicationPackageNames.SMS_PACK_NAME)) {
-                        sendNotification("Sms");
-                    }
-                    else if(pack.equals(ApplicationPackageNames.WHATSAPP_PACK_NAME)) {
+                    if(pack.equals(ApplicationPackageNames.WHATSAPP_PACK_NAME)) {
                         sendNotification("WhatsApp");
                     }
                     else if(pack.equals(ApplicationPackageNames.INSTAGRAM_PACK_NAME)) {
@@ -77,21 +66,23 @@ public class NotificationListener extends NotificationListenerService {
                     else if(pack.equals(ApplicationPackageNames.SNAPCHAT_PACK_NAME)) {
                         sendNotification("Snapchat");
                     }
-                    else if(pack.equals(ApplicationPackageNames.FACEBOOK_PACK_NAME) || pack.equals(ApplicationPackageNames.FACEBOOKM_PACK_NAME)) {
-                        sendNotification("Facebook");
-                    }
                     else if(pack.equals(ApplicationPackageNames.TWITTER_PACK_NAME)) {
                         sendNotification("Twitter");
                     }
-                    else if(pack.equals(ApplicationPackageNames.MAIL_PACK_NAME) || pack.equals(ApplicationPackageNames.GMAIL_PACK_NAME)) {
+                    else if(pack.equals(ApplicationPackageNames.FACEBOOK_PACK_NAME) || pack.equals(ApplicationPackageNames.FACEBOOK_M_PACK_NAME)) {
+                        sendNotification("Facebook");
+                    }
+                    else if(pack.equals(ApplicationPackageNames.S_MAIL_PACK_NAME) || pack.equals(ApplicationPackageNames.G_MAIL_PACK_NAME)) {
                         sendNotification("Mail");
                     }
+                    else if(pack.equals(ApplicationPackageNames.G_SMS_PACK_NAME) || pack.equals(ApplicationPackageNames.S_SMS_PACK_NAME ) || pack.equals(smsPckName)) {
+                        sendNotification("Sms");
+                    }
+//                    else if((pack.equals(ApplicationPackageNames.G_PHONE_PACK_NAME) || pack.equals(ApplicationPackageNames.S_PHONE_PACK_NAME)) && !lock) {
+//                        sendNotification("Telefon");
+//                        setLock();
+//                    }
                 }
-            }
-
-            if(pack.equals(ApplicationPackageNames.PHONE_PACK_NAME) && !lock) {
-                sendNotification("Telefon");
-                setLock();
             }
         }
     }
@@ -128,16 +119,25 @@ public class NotificationListener extends NotificationListenerService {
         );
     }
 
+    private void setSmsPackName() {
+        smsPckName = Telephony.Sms.getDefaultSmsPackage(this);
+    }
+
     private static final class ApplicationPackageNames {
-        public static final String SMS_PACK_NAME = "com.samsung.android.messaging";
         public static final String WHATSAPP_PACK_NAME = "com.whatsapp";
         public static final String INSTAGRAM_PACK_NAME = "com.instagram.android";
         public static final String SNAPCHAT_PACK_NAME = "com.snapchat.android";
-        public static final String FACEBOOK_PACK_NAME = "com.facebook.katana";
-        public static final String FACEBOOKM_PACK_NAME = "com.facebook.orca";
         public static final String TWITTER_PACK_NAME = "com.twitter.android";
-        public static final String MAIL_PACK_NAME = "com.samsung.android.email.provider";
-        public static final String GMAIL_PACK_NAME = "com.google.android.gm";
-        public static final String PHONE_PACK_NAME = "com.samsung.android.incallui";
+        public static final String FACEBOOK_PACK_NAME = "com.facebook.katana";
+        public static final String FACEBOOK_M_PACK_NAME = "com.facebook.orca";
+
+        public static final String G_MAIL_PACK_NAME = "com.google.android.gm";
+        public static final String S_MAIL_PACK_NAME = "com.samsung.android.email.provider";
+
+        public static final String G_SMS_PACK_NAME = "com.google.android.apps.messaging";
+        public static final String S_SMS_PACK_NAME = "com.samsung.android.messaging";
+
+        public static final String G_PHONE_PACK_NAME = "com.google.android.dialer";
+        public static final String S_PHONE_PACK_NAME = "com.samsung.android.incallui";
     }
 }

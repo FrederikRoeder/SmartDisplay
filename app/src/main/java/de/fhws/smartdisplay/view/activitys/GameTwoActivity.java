@@ -34,6 +34,7 @@ public class GameTwoActivity extends AppCompatActivity {
     private TextView textViewPoints;
     private Button connectButton;
     private ImageButton closeButton;
+    private boolean lock = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,28 +60,31 @@ public class GameTwoActivity extends AppCompatActivity {
         connectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                serverConnection.startPong().enqueue(new Callback<String>() {
-                    @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
-                        if(response.isSuccessful()) {
-                            Handler handler = new Handler(Looper.getMainLooper());
-                            handler.post(new Runnable() {
-                                public void run() {
-                                    if(gameClient != null) {
-                                        gameClient.exit();
+                if(!lock) {
+                    setLock();
+                    serverConnection.startPong().enqueue(new Callback<String>() {
+                        @Override
+                        public void onResponse(Call<String> call, Response<String> response) {
+                            if (response.isSuccessful()) {
+                                Handler handler = new Handler(Looper.getMainLooper());
+                                handler.post(new Runnable() {
+                                    public void run() {
+                                        if (gameClient != null) {
+                                            gameClient.exit();
+                                        }
+                                        changePoints("0");
+                                        createGameClient();
                                     }
-                                    changePoints("0");
-                                    createGameClient();
-                                }
-                            });
+                                });
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onFailure(Call<String> call, Throwable t) {
+                        @Override
+                        public void onFailure(Call<String> call, Throwable t) {
 
-                    }
-                });
+                        }
+                    });
+                }
             }
         });
     }
@@ -166,5 +170,18 @@ public class GameTwoActivity extends AppCompatActivity {
 
     private void changePoints(String pionts) {
         textViewPoints.setText("Punkte: " + pionts);
+    }
+
+    private void setLock() {
+        lock = true;
+        new java.util.Timer().schedule(
+                new java.util.TimerTask() {
+                    @Override
+                    public void run() {
+                        lock = false;
+                    }
+                },
+                3000
+        );
     }
 }

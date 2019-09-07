@@ -10,11 +10,15 @@
         android:roundIcon="@mipmap/icon_retrospect_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".view.activitys.GameTwoActivity"></activity>
         <activity
             android:name=".view.activitys.GameOneActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".view.activitys.GameTwoActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
+        </activity>
         <activity
             android:name=".view.activitys.MainActivity"
             android:configChanges="orientation"
@@ -27,7 +31,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <service
             android:name=".services.NotificationListener"
             android:label="@string/app_name"
@@ -36,9 +39,15 @@
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
+        <receiver android:name=".services.CallListener">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE"/>
+            </intent-filter>
+        </receiver>
     </application>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>
