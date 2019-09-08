@@ -54,7 +54,7 @@ public class NotificationListener extends NotificationListenerService {
                     text = extras.getCharSequence("android.text").toString();
 
 
-                    Log.d("pack", "PackageName: " + pack);
+                    Log.d("notpac", "PackageName: " + pack);
 
 
                     if(pack.equals(ApplicationPackageNames.WHATSAPP_PACK_NAME)) {

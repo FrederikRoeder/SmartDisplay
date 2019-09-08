@@ -16,20 +16,24 @@ import retrofit2.Response;
 public class CallListener extends BroadcastReceiver {
 
     @Override
-    public void onReceive(final Context context, Intent intent) {
+    public void onReceive(Context context, Intent intent) {
+
+
+        Log.d("notpac", "Call 1");
+
 
         SharedPreferences settings = context.getSharedPreferences("Settings", 0);
         ServerConnection serverConnection = new ConnectionFactory().buildConnection();
 
 
-        Log.d("pack", "Call vor if");
+        Log.d("notpac", "Call vor if");
 
 
         String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
         if (TelephonyManager.EXTRA_STATE_RINGING.equals(state) && settings.getBoolean("NotificationState", false)) {
 
 
-            Log.d("pack", "Call in if");
+            Log.d("notpac", "Call in if");
 
 
             serverConnection.sendNotification("Telefon", settings.getString("Name", "")).enqueue(new Callback<Void>() {
@@ -37,7 +41,7 @@ public class CallListener extends BroadcastReceiver {
                 public void onResponse(Call<Void> call, Response<Void> response) {
 
 
-                    Log.d("pack", "Call onResponse");
+                    Log.d("notpac", "Call onResponse");
 
 
                 }
@@ -46,12 +50,11 @@ public class CallListener extends BroadcastReceiver {
                 public void onFailure(Call<Void> call, Throwable t) {
 
 
-                    Log.d("pack", "Call onFailure");
+                    Log.d("notpac", "Call onFailure");
 
 
                 }
             });
         }
     }
-
 }
