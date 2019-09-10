@@ -20,7 +20,6 @@ public class NotificationListener extends NotificationListenerService {
     private ServerConnection serverConnection;
 
     private String smsPckName = "";
-    private boolean lock = false;
 
     @Override
     public void onCreate() {
@@ -54,7 +53,7 @@ public class NotificationListener extends NotificationListenerService {
                     text = extras.getCharSequence("android.text").toString();
 
 
-                    Log.d("notpac", "PackageName: " + pack);
+                    Log.d("notpack", "PackageName: " + pack);
 
 
                     if(pack.equals(ApplicationPackageNames.WHATSAPP_PACK_NAME)) {
@@ -75,14 +74,9 @@ public class NotificationListener extends NotificationListenerService {
                     else if(pack.equals(ApplicationPackageNames.S_MAIL_PACK_NAME) || pack.equals(ApplicationPackageNames.G_MAIL_PACK_NAME)) {
                         sendNotification("Mail");
                     }
-                    else if(//pack.equals(ApplicationPackageNames.G_SMS_PACK_NAME) || pack.equals(ApplicationPackageNames.S_SMS_PACK_NAME ) ||
-                            pack.equals(smsPckName)) {
+                    else if(pack.equals(smsPckName)) {
                         sendNotification("Sms");
                     }
-//                    else if((pack.equals(ApplicationPackageNames.G_PHONE_PACK_NAME) || pack.equals(ApplicationPackageNames.S_PHONE_PACK_NAME)) && !lock) {
-//                        sendNotification("Telefon");
-//                        setLock();
-//                    }
                 }
             }
         }
@@ -107,19 +101,6 @@ public class NotificationListener extends NotificationListenerService {
         });
     }
 
-    private void setLock() {
-        lock = true;
-        new java.util.Timer().schedule(
-                new java.util.TimerTask() {
-                    @Override
-                    public void run() {
-                        lock = false;
-                    }
-                },
-                30000
-        );
-    }
-
     private void setSmsPackName() {
         smsPckName = Telephony.Sms.getDefaultSmsPackage(this);
     }
@@ -131,14 +112,7 @@ public class NotificationListener extends NotificationListenerService {
         public static final String TWITTER_PACK_NAME = "com.twitter.android";
         public static final String FACEBOOK_PACK_NAME = "com.facebook.katana";
         public static final String FACEBOOK_M_PACK_NAME = "com.facebook.orca";
-
         public static final String G_MAIL_PACK_NAME = "com.google.android.gm";
         public static final String S_MAIL_PACK_NAME = "com.samsung.android.email.provider";
-
-//        public static final String G_SMS_PACK_NAME = "com.google.android.apps.messaging";
-//        public static final String S_SMS_PACK_NAME = "com.samsung.android.messaging";
-//
-//        public static final String G_PHONE_PACK_NAME = "com.google.android.dialer";
-//        public static final String S_PHONE_PACK_NAME = "com.samsung.android.incallui";
     }
 }

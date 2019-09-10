@@ -2,10 +2,13 @@ package de.fhws.smartdisplay.view.fragments;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,6 +59,10 @@ public class SettingsFragment extends Fragment {
         ImageButton buttonAllowNotifications = view.findViewById(R.id.imageButtonAllowNotifications);
         buttonAllowNotifications.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+                if(ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.READ_PHONE_STATE}, 0);
+                }
+
                 Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
                 startActivity(intent);
             }
