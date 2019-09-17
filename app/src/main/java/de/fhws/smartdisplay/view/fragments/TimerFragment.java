@@ -135,12 +135,10 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
                     handler.post(new Runnable() {
                         public void run() {
                             timer = Arrays.asList(response.body().split(";"));
-                            if(!timer.isEmpty()) {
-                                for(int i = 0; i < timer.size(); i++) {
-                                    String expandedTime = timer.get(i);
-                                    expandedTime += " Uhr";
-                                    timer.set(i, expandedTime);
-                                }
+                            for(int i = 0; i < timer.size(); i++) {
+                                String expandedTime = timer.get(i);
+                                expandedTime += " Uhr";
+                                timer.set(i, expandedTime);
                             }
                             adapter = new ArrayAdapter<>(getActivity(), R.layout.list_todo, timer);
                             timerList.setAdapter(adapter);
