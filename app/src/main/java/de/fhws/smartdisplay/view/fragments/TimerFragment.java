@@ -130,7 +130,7 @@ public class TimerFragment extends Fragment implements TimerPopup.DialogListener
         serverConnection.getTimerList().enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, final Response<String> response) {
-                if(response.isSuccessful()) {
+                if(response.isSuccessful() && response.body().length() > 0) {
                     Handler handler = new Handler(Looper.getMainLooper());
                     handler.post(new Runnable() {
                         public void run() {
