@@ -28,7 +28,6 @@ public class GamesFragment extends Fragment {
 
         setupSnake(view);
         setupPong(view);
-        setupTetris(view);
 
         return view;
     }
@@ -49,15 +48,6 @@ public class GamesFragment extends Fragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), GameTwoActivity.class);
                 startActivity(intent);
-            }
-        });
-    }
-
-    private void setupTetris(View view) {
-        ImageButton buttonGameThree = view.findViewById(R.id.imageButtonGame3);
-        buttonGameThree.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                //todo: open game 3
             }
         });
     }

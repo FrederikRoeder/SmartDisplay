@@ -86,31 +86,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textViewGame2" />
 
-                <TextView
-                    android:id="@+id/textViewGame3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="8dp"
-                    android:text="Game 3"
-                    android:textSize="18sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imageButtonGame2" />
-
-                <ImageButton
-                    android:id="@+id/imageButtonGame3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:background="@color/primaryBackgroundColor"
-                    android:src="@mipmap/icon_retrospect"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewGame3" />
             </android.support.constraint.ConstraintLayout>
         </ScrollView>
     </android.support.constraint.ConstraintLayout>
