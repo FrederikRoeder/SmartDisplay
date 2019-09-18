@@ -34,9 +34,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="16dp"
         android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/imageButtonUpSnake"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -102,7 +102,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="16dp"
         android:src="@drawable/icon_down_dark"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/textViewPointsSnake"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
