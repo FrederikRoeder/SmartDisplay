@@ -23,6 +23,11 @@ import static de.fhws.smartdisplay.game.ServerCmdType.SEND_ID;
 import static de.fhws.smartdisplay.game.ServerCmdType.SERVER_CONNECTION_LOST;
 
 public class GameClient extends Thread {
+
+    public interface GameClientCallback {
+        void command(Queue<ServerCmd> cmd);
+    }
+
     private static final String TAG = "GameClient";
     private static Charset utf8 = Charset.forName("UTF-8");
     private final GameClientCallback callback;
@@ -58,8 +63,6 @@ public class GameClient extends Thread {
         SocketChannel channel;
         Selector selector;
         try {
-//            String hostAddress = InetAddress.getByName("GAMERZ").getHostAddress();
-//            Log.d(TAG, "run: host:" + hostAddress);
             channel = SocketChannel.open();
             channel.socket().connect(new InetSocketAddress(ServerConfig.IP_GAMESERVER, ServerConfig.PORT_GAMESERVER), 10000);
             channel.configureBlocking(false);
@@ -212,32 +215,4 @@ public class GameClient extends Thread {
         globalReadBuffer += str;
         return true;
     }
-
-    public interface GameClientCallback {
-        void command(Queue<ServerCmd> cmd);
-    }
-
-    static class QueueAddingThread extends Thread {
-
-        private final Queue<String> queue;
-        private final String[] messages;
-
-        public QueueAddingThread(Queue<String> queue, String[] strings) {
-            this.queue = queue;
-            messages = strings;
-        }
-
-        @Override
-        public void run() {
-            for (String msge : messages) {
-                try {
-                    Thread.sleep(500);
-                    queue.add(msge);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
 }
