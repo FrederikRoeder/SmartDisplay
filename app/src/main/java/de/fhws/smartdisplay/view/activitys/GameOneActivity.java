@@ -84,7 +84,12 @@ public class GameOneActivity extends AppCompatActivity {
 
                         @Override
                         public void onFailure(Call<String> call, Throwable t) {
-                            Log.e(TAG, "onFailure: ", t);
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    Toast.makeText(getApplicationContext(), "Serververbindung konnte nicht hergestellt werden", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         }
                     });
                 }
@@ -163,15 +168,14 @@ public class GameOneActivity extends AppCompatActivity {
                         Log.d(TAG, "command: " + cmd.getType());
                         switch (cmd.getType()) {
                             case EXIT:
-                                Toast.makeText(getApplicationContext(), "EXIT", Toast.LENGTH_SHORT).show();
                                 connectButton.setVisibility(View.VISIBLE);
                                 break;
                             case CONNECTION_FAILED:
-                                Toast.makeText(getApplicationContext(), "CONNECTION_FAILED", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "Spielverbindung konnte nicht hergestellt werden", Toast.LENGTH_SHORT).show();
+                                connectButton.setVisibility(View.VISIBLE);
                                 break;
                             case PLAYER_ID_DEAD:
                                 String deadId = cmd.getArg(0);
-                                Toast.makeText(getApplicationContext(), "PLAYER_ID_DEAD: " + deadId, Toast.LENGTH_SHORT).show();
                                 break;
                             case PLAYER_ID_POINT:
                                 String id = cmd.getArg(0);
@@ -183,11 +187,10 @@ public class GameOneActivity extends AppCompatActivity {
                             case SEND_ID:
                                 playerId = cmd.getArg(0);
                                 connectButton.setVisibility(View.GONE);
-                                Toast.makeText(getApplicationContext(), "your id: " + playerId, Toast.LENGTH_SHORT).show();
                                 break;
                             case SERVER_CONNECTION_LOST:
                                 connectButton.setVisibility(View.VISIBLE);
-                                Toast.makeText(getApplicationContext(), "SERVER_CONNECTION_LOST", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "Spielverbindung unterbrochen", Toast.LENGTH_SHORT).show();
                                 break;
                         }
                     }
